@@ -1,0 +1,43 @@
+""" @Authors
+* Student Names: İhsan Gök, Ozan ölmez, Atahan Çolak
+* Student IDs: 150210093, 150220045, 150210106
+"""
+
+# Base test results that are given in the dataset
+There are no changes made either in the code or the tests provided in the dataset
+
+# The results of the executed script for the given tests
+
+python misc\run_java_tests.py --stop-on-failure --clean
+[PASS] 0
+[PASS] 1
+[PASS] 109
+[PASS] 110
+[PASS] 124
+[PASS] 129
+[PASS] 13
+[PASS] 140
+[PASS] 141
+[PASS] 156
+[PASS] 16
+[PASS] 160
+[PASS] 162
+[PASS] 18
+[PASS] 20
+[PASS] 25
+[PASS] 29
+[PASS] 32
+[PASS] 40
+[PASS] 44
+[PASS] 46
+[PASS] 48
+[PASS] 5
+[PASS] 55
+[PASS] 57
+[PASS] 58
+[PASS] 65
+[PASS] 69
+[PASS] 76
+[PASS] 8
+
+Summary: 30 passed, 0 failed
