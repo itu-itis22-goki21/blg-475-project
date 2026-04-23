@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">gpt54.task40</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package gpt54.task40;
+
+/* @Authors
+* Student Names: İhsan Gök, Ozan ölmez, Atahan Çolak
+* Student IDs: 150210093, 150220045, 150210106
+*/
+
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L11">class Solution {</span>
+    /**
+    triplesSumToZero takes a list of integers as an input.
+    it returns True if there are three distinct elements in the list that
+    sum to zero, and False otherwise.
+
+    &gt;&gt;&gt; triplesSumToZero(Arrays.asList(1, 3, 5, 0))
+    false
+    &gt;&gt;&gt; triplesSumToZero(Arrays.asList(1, 3, -2, 1))
+    true
+    &gt;&gt;&gt; triplesSumToZero(Arrays.asList(1, 2, 3, 7))
+    false
+    &gt;&gt;&gt; triplesSumToZero(Arrays.asList(2, 4, -5, 3, 9, 7))
+    true
+    &gt;&gt;&gt; triplesSumToZero(Arrays.asList(1))
+    false
+     */
+    public boolean triplesSumToZero(List&lt;Integer&gt; l) {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (l.size() &lt; 3) {</span>
+<span class="fc" id="L30">            return false;</span>
+        }
+
+<span class="fc" id="L33">        List&lt;Integer&gt; sorted = new ArrayList&lt;&gt;(l);</span>
+<span class="fc" id="L34">        Collections.sort(sorted);</span>
+
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        for (int i = 0; i &lt; sorted.size() - 2; i++) {</span>
+<span class="fc" id="L37">            int left = i + 1;</span>
+<span class="fc" id="L38">            int right = sorted.size() - 1;</span>
+
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            while (left &lt; right) {</span>
+<span class="fc" id="L41">                int sum = sorted.get(i) + sorted.get(left) + sorted.get(right);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">                if (sum == 0) {</span>
+<span class="fc" id="L43">                    return true;</span>
+                }
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                if (sum &lt; 0) {</span>
+<span class="fc" id="L46">                    left++;</span>
+                } else {
+<span class="fc" id="L48">                    right--;</span>
+                }
+<span class="fc" id="L50">            }</span>
+        }
+
+<span class="fc" id="L53">        return false;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

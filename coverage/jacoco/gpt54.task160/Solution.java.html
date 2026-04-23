@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">gpt54.task160</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package gpt54.task160;
+
+/* @Authors
+* Student Names: İhsan Gök, Ozan ölmez, Atahan Çolak
+* Student IDs: 150210093, 150220045, 150210106
+*/
+
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L11">class Solution {</span>
+    /**
+    Given two lists operator, and operand. The first list has basic algebra operations, and
+    the second list is a list of integers. Use the two given lists to build the algebric
+    expression and return the evaluation of this expression.
+
+    The basic algebra operations:
+    Addition ( + )
+    Subtraction ( - )
+    Multiplication ( * )
+    Floor division ( / )
+    Exponentiation ( ** )
+
+    Example:
+    operator[&quot;+&quot;, &quot;*&quot;, &quot;-&quot;]
+    array = [2, 3, 4, 5]
+    result = 2 + 3 * 4 - 5
+    =&gt; result = 9
+
+    Note:
+        The length of operator list is equal to the length of operand list minus one.
+        Operand is a list of of non-negative integers.
+        Operator list has at least one operator, and operand list has at least two operands.
+     */
+    public int doAlgebra(List&lt;String&gt; operator, List&lt;Integer&gt; operand) {
+<span class="fc" id="L36">        Deque&lt;Integer&gt; values = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L37">        Deque&lt;String&gt; operators = new ArrayDeque&lt;&gt;();</span>
+
+<span class="fc" id="L39">        values.push(operand.get(0));</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        for (int i = 0; i &lt; operator.size(); i++) {</span>
+<span class="fc" id="L41">            String current = operator.get(i);</span>
+<span class="fc bfc" id="L42" title="All 4 branches covered.">            while (!operators.isEmpty() &amp;&amp; shouldApplyBefore(operators.peek(), current)) {</span>
+<span class="fc" id="L43">                applyTop(values, operators.pop());</span>
+            }
+<span class="fc" id="L45">            operators.push(current);</span>
+<span class="fc" id="L46">            values.push(operand.get(i + 1));</span>
+        }
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        while (!operators.isEmpty()) {</span>
+<span class="fc" id="L50">            applyTop(values, operators.pop());</span>
+        }
+
+<span class="fc" id="L53">        return values.pop();</span>
+    }
+
+    private boolean shouldApplyBefore(String stacked, String current) {
+<span class="fc" id="L57">        int stackedPrecedence = precedence(stacked);</span>
+<span class="fc" id="L58">        int currentPrecedence = precedence(current);</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (stackedPrecedence &gt; currentPrecedence) {</span>
+<span class="fc" id="L60">            return true;</span>
+        }
+<span class="fc bfc" id="L62" title="All 4 branches covered.">        return stackedPrecedence == currentPrecedence &amp;&amp; !current.equals(&quot;**&quot;);</span>
+    }
+
+    private int precedence(String operator) {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (operator.equals(&quot;**&quot;)) {</span>
+<span class="fc" id="L67">            return 3;</span>
+        }
+<span class="fc bfc" id="L69" title="All 4 branches covered.">        if (operator.equals(&quot;*&quot;) || operator.equals(&quot;/&quot;)) {</span>
+<span class="fc" id="L70">            return 2;</span>
+        }
+<span class="fc" id="L72">        return 1;</span>
+    }
+
+    private void applyTop(Deque&lt;Integer&gt; values, String operator) {
+<span class="fc" id="L76">        int right = values.pop();</span>
+<span class="fc" id="L77">        int left = values.pop();</span>
+        int result;
+
+<span class="pc bpc" id="L80" title="1 of 6 branches missed.">        switch (operator) {</span>
+            case &quot;+&quot;:
+<span class="fc" id="L82">                result = left + right;</span>
+<span class="fc" id="L83">                break;</span>
+            case &quot;-&quot;:
+<span class="fc" id="L85">                result = left - right;</span>
+<span class="fc" id="L86">                break;</span>
+            case &quot;*&quot;:
+<span class="fc" id="L88">                result = left * right;</span>
+<span class="fc" id="L89">                break;</span>
+            case &quot;/&quot;:
+<span class="fc" id="L91">                result = Math.floorDiv(left, right);</span>
+<span class="fc" id="L92">                break;</span>
+            case &quot;**&quot;:
+<span class="fc" id="L94">                result = intPow(left, right);</span>
+<span class="fc" id="L95">                break;</span>
+            default:
+<span class="nc" id="L97">                throw new IllegalArgumentException(&quot;Unsupported operator: &quot; + operator);</span>
+        }
+
+<span class="fc" id="L100">        values.push(result);</span>
+<span class="fc" id="L101">    }</span>
+
+    private int intPow(int base, int exponent) {
+<span class="fc" id="L104">        int result = 1;</span>
+<span class="fc" id="L105">        int currentBase = base;</span>
+<span class="fc" id="L106">        int currentExponent = exponent;</span>
+
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        while (currentExponent &gt; 0) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if ((currentExponent &amp; 1) == 1) {</span>
+<span class="fc" id="L110">                result *= currentBase;</span>
+            }
+<span class="fc" id="L112">            currentBase *= currentBase;</span>
+<span class="fc" id="L113">            currentExponent &gt;&gt;= 1;</span>
+        }
+
+<span class="fc" id="L116">        return result;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
