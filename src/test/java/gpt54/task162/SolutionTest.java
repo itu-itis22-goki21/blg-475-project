@@ -1,12 +1,15 @@
 package gpt54.task162;
 
+import org.junit.jupiter.api.Test;
+
 import java.math.BigInteger;
 import java.security.*;
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+public class SolutionTest {
+    @Test
+    void sampleCases() throws NoSuchAlgorithmException  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.stringToMd5("Hello world").get().equals("3e25960a79dbc69b674cd4ec67a72c62"),
@@ -19,4 +22,5 @@ public class Main {
         }
     }
 }
+
 

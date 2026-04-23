@@ -1,10 +1,13 @@
 package gpt54.task8;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.sumProduct(new ArrayList<>(List.of())).equals(Arrays.asList(0, 1)),
@@ -18,4 +21,5 @@ public class Main {
         }
     }
 }
+
 

@@ -1,10 +1,13 @@
 package gpt54.task129;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.minPath(Arrays.asList(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6), Arrays.asList(7, 8, 9)), 3).equals(Arrays.asList(1, 2, 1)),
@@ -24,4 +27,5 @@ public class Main {
         }
     }
 }
+
 

@@ -1,10 +1,13 @@
 package gpt54.task160;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.doAlgebra(new ArrayList<>(Arrays.asList("**", "*", "+")), new ArrayList<>(Arrays.asList(2, 3, 4, 5))) == 37,
@@ -17,4 +20,5 @@ public class Main {
         }
     }
 }
+
 

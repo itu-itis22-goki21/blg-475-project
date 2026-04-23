@@ -1,10 +1,13 @@
 package gpt54.task0;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.hasCloseElements(new ArrayList<>(Arrays.asList(11.0, 2.0, 3.9, 4.0, 5.0, 2.2)), 0.3),
@@ -20,4 +23,5 @@ public class Main {
         }
     }
 }
+
 

@@ -1,10 +1,13 @@
 package gpt54.task58;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.common(new ArrayList<>(Arrays.asList(1, 4, 3, 34, 653, 2, 5)), new ArrayList<>(Arrays.asList(5, 7, 1, 5, 9, 653, 121))).equals(Arrays.asList(1, 5, 653)),
@@ -17,4 +20,5 @@ public class Main {
         }
     }
 }
+
 

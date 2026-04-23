@@ -1,10 +1,13 @@
 package gpt54.task55;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         List<Boolean> correct = Arrays.asList(
                 s.fib(10) == 55,
@@ -18,4 +21,5 @@ public class Main {
         }
     }
 }
+
 

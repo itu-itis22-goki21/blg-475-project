@@ -1,10 +1,13 @@
 package gpt54.task32;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 import java.lang.*;
 
-public class Main {
-    public static void main(String[] args) {
+public class SolutionTest {
+    @Test
+    void sampleCases()  {
         Solution s = new Solution();
         Random rand = new Random(42);
         for (int i = 0; i < 100; i++) {
@@ -24,4 +27,5 @@ public class Main {
         }
     }
 }
+
 
