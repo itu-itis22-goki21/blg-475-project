@@ -1,0 +1,317 @@
+""" @Authors
+* Student Names: İhsan Gök, Ozan ölmez, Atahan Çolak
+* Student IDs: 150210093, 150220045, 150210106
+"""
+
+# Base test extraction
+
+## Usage Note
+Added base tests for selected tasks from the given dataset
+
+## Prompt
+
+› can you write a script to extract test fields from data\out3.jsonl and add to gpt-5.4\Java folders
+
+
+## Response
+
+• Running Get-ChildItem -Force
+
+• Ran Get-ChildItem -Force
+  └
+
+    … +10 lines (ctrl + t to view transcript)
+
+
+
+• Ran rg --files
+  └ README.md
+    misc\prompts.py
+    … +32 lines (ctrl + t to view transcript)
+    gpt-5.4\Java\16\Solution.java
+    gpt-5.4\Java\141\Solution.java
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• I found an existing extraction script area under misc/, plus per-problem directories under gpt-5.4/Java. Next I’m
+  reading data/out3.jsonl and the current helper scripts to match the repo’s conventions.
+
+• Running Get-Content -Path data\out3.jsonl -TotalCount 3
+
+• Running Get-Content -Path misc\prompts.py
+
+• Ran Get-Content -Path misc\prompts.py
+  └ """ @Authors
+
+            print("-" * 50)
+
+• Ran Get-Content -Path data\out3.jsonl -TotalCount 3
+  └ {"task_id": "Java/0", "prompt": "import java.util.*;\nimport java.lang.*;\n\nclass Solution {\n    /**\n    Check if
+    in given list of numbers, are any two numbers closer to each other than given threshold.\n    >>>
+    … +70 lines (ctrl + t to view transcript)
+    (correct.contains(false)) {\n            throw new AssertionError();\n        }\n    }\n}\n", "difficulty":
+    "moderate"}
+
+• Ran Get-Content -Path misc\extract_prompts.py
+  └ """ @Authors
+    * Student Names: Ä°hsan GÃ¶k
+    … +30 lines (ctrl + t to view transcript)
+        extract_prompts(INPUT_FILE, OUTPUT_FILE)
+        print(f"Prompts extracted to {OUTPUT_FILE}")
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• out3.jsonl contains the test payload keyed by task_id, and the Java task folders currently only contain Solution.java.
+• Running Get-Content -Path README.md
+
+• Running Get-Content -Path gpt-5.4\Java\0\Solution.java
+
+• Ran Get-Content -Path README.md
+  └ this is a temporary readme file I'm pushing to test if the git repo is working correctly.
+    I will push an actual readme file later on.
+
+• Ran Get-Content -Path gpt-5.4\Java\0\Solution.java
+  └ /* @Authors
+    * Student Names: Ä°hsan GÃ¶k, Ozan Ã¶lmez, Atahan Ã‡olak
+    … +27 lines (ctrl + t to view transcript)
+        }
+    }
+
+• Ran Get-ChildItem -Recurse -File gpt-5.4 | Select-Object FullName
+  └
+    FullName
+    … +32 lines (ctrl + t to view transcript)
+
+  └ .\README.md:1:this is a temporary readme file I'm pushing to test if the git repo is working correctly.
+    .\data\prompts_extracted.jsonl:5:{"task_id": "Java/13", "prompt": "import java.util.*;\nimport java.lang.*;\n\nclass
+    … +102 lines (ctrl + t to view transcript)
+    .\gpt-5.4\Java\69\Solution.java:11:    You are given a non-empty list of positive integers. Return the greatest
+    integer that is greater than
+
+• Ran Get-ChildItem -Directory -Recurse | Where-Object { $_.Name -eq 'Java' } | Select-Object FullName
+  └
+    FullName
+    … +2 lines (ctrl + t to view transcript)
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• I have enough context to implement it. I’m going to add a small utility under misc/ that reads data/out3.jsonl, maps
+  Java/<id> records to gpt-5.4/Java/<id>/Main.java, creates missing task folders if needed, and then I’ll run it once to
+  populate the test files.
+
+• Running git status --short
+
+• Ran git status --short
+  └ (no output)
+
+• Ran @'
+  │ import json
+  │ from pathlib import Path
+  │ … +16 lines
+  └ 30
+    0 1 5 8 13 16 18 20 25 29 32 40 44 46 48 55 57 58 65 69 76 109 110 124 129 140 141 156 160 162
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• I verified the dataset lines up with the 30 existing Java task folders, so the script can write directly into those
+  directories without inventing extra structure. Now I’m adding the extractor script and then I’ll execute it to
+  populate the Main.java files.
+
+• Added misc\extract_tests.py (+73 -0)
+     1 +"""Extract Java test files from a JSONL dataset into task folders."""
+     2 +
+     3 +from __future__ import annotations
+     4 +
+     5 +import argparse
+     6 +import json
+     7 +from pathlib import Path
+     8 +
+     9 +
+    10 +def extract_tests(input_file: Path, output_root: Path, filename: str, language: str) -> int:
+    11 +    written = 0
+    12 +
+    13 +    with input_file.open("r", encoding="utf-8") as fin:
+    14 +        for line_number, line in enumerate(fin, start=1):
+    15 +            line = line.strip()
+    16 +            if not line:
+    17 +                continue
+    18 +
+    19 +            data = json.loads(line)
+    20 +            task_id = data.get("task_id", "")
+    21 +            test_code = data.get("test")
+    22 +
+    23 +            if not task_id.startswith(f"{language}/") or not test_code:
+    24 +                continue
+    25 +
+    26 +            _, task_number = task_id.split("/", 1)
+    27 +            task_dir = output_root / task_number
+    28 +            task_dir.mkdir(parents=True, exist_ok=True)
+    29 +
+    30 +            output_path = task_dir / filename
+    31 +            output_path.write_text(test_code.rstrip() + "\n", encoding="utf-8")
+    32 +            written += 1
+    33 +
+    34 +    return written
+    35 +
+    36 +
+    37 +def parse_args() -> argparse.Namespace:
+    38 +    parser = argparse.ArgumentParser(
+    39 +        description="Extract test fields from a JSONL file into per-task folders."
+    40 +    )
+    41 +    parser.add_argument(
+    42 +        "--input",
+    43 +        type=Path,
+    44 +        default=Path("data/out3.jsonl"),
+    45 +        help="Path to the source JSONL file.",
+    46 +    )
+    47 +    parser.add_argument(
+    48 +        "--output-root",
+    49 +        type=Path,
+    50 +        default=Path("gpt-5.4/Java"),
+    53 +    parser.add_argument(
+    54 +        "--filename",
+    55 +        default="Main.java",
+    56 +        help="Name of the file to create inside each task folder.",
+    57 +    )
+    58 +    parser.add_argument(
+    61 +        help="Task language prefix to filter by, for example Java.",
+    62 +    )
+    63 +    return parser.parse_args()
+    64 +
+    65 +
+    66 +def main() -> None:
+    67 +    args = parse_args()
+    68 +    written = extract_tests(args.input, args.output_root, args.filename, args.language)
+    69 +    print(f"Wrote {written} test files to {args.output_root}")
+    70 +
+    71 +
+    72 +if __name__ == "__main__":
+    73 +    main()
+
+• Ran python misc\extract_tests.py
+  └ Wrote 30 test files to gpt-5.4\Java
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The extractor ran cleanly and wrote 30 test files. I’m doing a quick verification pass on a few generated files and
+  the final git diff so I can tell you exactly what changed.
+
+• Running Get-Content -Path gpt-5.4\Java\0\Main.java
+
+• Running Get-Content -Path gpt-5.4\Java\160\Main.java
+
+• Running @(Get-ChildItem -Path gpt-5.4\Java -Recurse -Filter Main.java).Count
+
+• Ran git status --short
+  └ ?? gpt-5.4/Java/0/Main.java
+    ?? gpt-5.4/Java/1/Main.java
+    … +27 lines (ctrl + t to view transcript)
+    ?? gpt-5.4/Java/8/Main.java
+    ?? misc/extract_tests.py
+
+• Ran @(Get-ChildItem -Path gpt-5.4\Java -Recurse -Filter Main.java).Count
+  └ 30
+
+• Ran Get-Content -Path gpt-5.4\Java\160\Main.java
+  └ public class Main {
+        public static void main(String[] args) {
+    … +11 lines (ctrl + t to view transcript)
+        }
+    }
+
+• Ran Get-Content -Path gpt-5.4\Java\0\Main.java
+  └ public class Main {
+        public static void main(String[] args) {
+    … +13 lines (ctrl + t to view transcript)
+        }
+    }
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• One issue showed up in verification: the raw test field doesn’t include imports, so the generated Main.java files
+  would be incomplete for normal javac Solution.java Main.java usage. I’m adjusting the script to carry over the import
+  block from each record’s declaration before rewriting the test files.
+
+• Edited misc\extract_tests.py (+17 -1)
+     9
+    10 +def extract_import_block(declaration: str) -> str:
+    11 +    import_lines = []
+    14 +        stripped = line.strip()
+    15 +        if stripped.startswith("import "):
+    16 +            import_lines.append(stripped)
+    17 +
+    18 +    if not import_lines:
+    19 +        return ""
+    20 +
+    23 +
+    24  def extract_tests(input_file: Path, output_root: Path, filename: str, language: str) -> int:
+       ⋮
+    35              test_code = data.get("test")
+    36 +            declaration = data.get("declaration", "")
+    37
+       ⋮
+    45              output_path = task_dir / filename
+    31 -            output_path.write_text(test_code.rstrip() + "\n", encoding="utf-8")
+    46 +            import_block = extract_import_block(declaration) if language == "Java" else ""
+    47 +            output_path.write_text(import_block + test_code.rstrip() + "\n", encoding="utf-8")
+    48              written += 1
+
+• Ran python misc\extract_tests.py
+  └ Wrote 30 test files to gpt-5.4\Java
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• I fixed the generated test files to include the import block from each dataset record, which matters for tasks like
+  Java/162 that reference NoSuchAlgorithmException. I’m doing one more verification pass, including a quick compile on a
+  couple of tasks if javac is available.
+
+• Running Get-Content -Path gpt-5.4\Java\0\Main.java
+
+• Running Get-Content -Path gpt-5.4\Java\162\Main.java
+
+• Running javac Solution.java Main.java
+
+• Ran Get-Content -Path gpt-5.4\Java\0\Main.java
+        }
+• Ran Get-Content -Path gpt-5.4\Java\162\Main.java
+  └ import java.math.BigInteger;
+    import java.security.*;
+    … +15 lines (ctrl + t to view transcript)
+        }
+    }
+
+• Ran javac Solution.java Main.java
+  └ (no output)
+
+• Ran javac Solution.java Main.java
+  └ (no output)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The quick compile checks passed for Java/0 and Java/162. I’m removing the temporary .class files from that
+  verification so the worktree only contains the script and the generated Main.java sources.
+
+• Ran Remove-Item -LiteralPath gpt-5.4\Java\0\Main.class, gpt-5.4\Java\0\Solution.class, gpt-5.4\Java\162\Main.class,
+  │ gpt-5.4\Java\162\Solution.class
+  └ (no output)
+
+• Running @(Get-ChildItem -Path gpt-5.4\Java -Recurse -Filter Main.java).Count
+  └ 30
+
+• Ran git status --short
+  └ ?? gpt-5.4/Java/0/Main.java
+    ?? gpt-5.4/Java/8/Main.java
+    ?? misc/extract_tests.py
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Added /C:/Users/posti/Desktop/blg-475-project/misc/extract_tests.py:1 to extract the test field from data/out3.jsonl
+  into each task folder under gpt-5.4/Java as Main.java. I ran it once, so there are now 30 generated test files like /
+  C:/Users/posti/Desktop/blg-475-project/gpt-5.4/Java/0/Main.java:1 and /C:/Users/posti/Desktop/blg-475-project/gpt-5.4/
+  Java/162/Main.java:1.
+
+  The script also copies the import block from each record’s declaration, so the generated tests are usable as
+  standalone Java files. I spot-checked compilation with javac Solution.java Main.java for tasks 0 and 162; both
+  compiled cleanly. To rerun it later, use python misc\extract_tests.py.
