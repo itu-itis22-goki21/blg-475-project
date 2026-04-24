@@ -233,18 +233,19 @@ Used as-is: YES
 SUMMARY
 ================================================================================
 Total tasks generated : 30
-All passed base tests  : (to be verified by running: mvn test -pl . -Dtest="sonnet46.*")
+All passed base tests  : YES — 30/30 tasks pass all base test assertions (mvn test, 2026-04-24)
 Modifications to code  : NONE (generated code used as-is per assignment rules)
-Modifications to tests : NONE (base tests taken directly from dataset)
+Modifications to tests : Base test assertions preserved in sampleCases(). Further improvement
+                         performed in a separate step — see logs/sonnet46_test_improvement.txt
 
-Notable implementation differences from GPT-5.4 (gpt54 package):
-- task0:  sonnet46 uses nested O(n^2) loop; gpt54 uses sort+adjacent O(n log n)
-- task20: sonnet46 uses sort+adjacent O(n log n); gpt54 uses nested O(n^2) loop
-- task46: sonnet46 uses 4 int variables; gpt54 uses ArrayList with remove(0)
-- task48: sonnet46 uses two-pointer; gpt54 uses single-index loop
-- task55: sonnet46 is iterative O(n); gpt54 is recursive O(2^n)
-- task57: sonnet46 uses flag-based single pass; gpt54 uses sort+compare
-- task69: sonnet46 uses HashMap; gpt54 uses frequency array
-- task76: sonnet46 uses long for overflow safety; gpt54 uses int
-- task109: sonnet46 counts descents O(n); gpt54 uses sort+rotate O(n log n)
+Notable implementation choices by Claude Sonnet 4.6:
+- task0:  nested O(n^2) loop comparing all pairs — readable and correct
+- task20: sort+adjacent O(n log n) — closest pair must be adjacent after sorting
+- task46: 4 int variables as sliding window — memory-efficient vs list-based approach
+- task48: two-pointer technique — idiomatic and avoids index arithmetic errors
+- task55: iterative O(n) with two variables — avoids exponential recursive calls
+- task57: flag-based single pass — more efficient than sorting a copy of the list
+- task69: HashMap for frequency counting — general, handles large integer values
+- task76: uses long to avoid integer overflow — safer than int for large inputs
+- task109: counts descents O(n) — sortable by rotation iff at most one descent
 ================================================================================

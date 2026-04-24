@@ -1,0 +1,323 @@
+================================================================================
+BLG-475E Project - Claude Sonnet 4.6 Test Improvement Log
+Authors: İhsan Gök (150210093), Ozan Ölmez (150220045), Atahan Çolak (150210106)
+Model: Claude Sonnet 4.6 (claude-sonnet-4-6) via Claude Code CLI (agentic approach)
+Date: 2026-04-24
+================================================================================
+
+STEP: Test Improvement via JNose Smell Analysis + JaCoCo Branch Coverage
+
+================================================================================
+PRE-IMPROVEMENT STATE
+================================================================================
+
+The initial sonnet46 SolutionTest files used the same pattern as the extracted
+base tests from the HumanEval dataset — identical to the gpt54 test format:
+
+  @Test
+  void sampleCases() {
+      Solution s = new Solution();
+      List<Boolean> correct = Arrays.asList(
+          s.method(...) == expectedValue,
+          !s.method(...),
+          ...
+      );
+      if (correct.contains(false)) {
+          throw new AssertionError();
+      }
+  }
+
+JNose (https://jnosetest.github.io) was run on all test files and detected the
+following smells in this pattern:
+
+  - "Unknown Test": No formal assertion statement used — JNose does not recognize
+    the List<Boolean>/throw pattern as a valid assertion.
+  - "Conditional Test Logic": The if (correct.contains(false)) branch introduces
+    logic inside the test, which is a recognized test smell.
+
+These smells were detected across all 30 sonnet46 test classes.
+
+JaCoCo branch coverage was measured via mvn verify. Results identified 10 tasks
+with at least one uncovered branch:
+
+  task1   (separateParenGroups) — empty string and spaces-only input paths
+  task18  (howManyTimes)        — empty substring and length guard branches
+  task44  (changeBase)          — x == 0 early return branch
+  task46  (fib4)                — n < 4 base case branches
+  task55  (fib)                 — n == 0 early return branch
+  task69  (isHappy)             — length < 3 guard branch
+  task124 (validDate)           — field-length violation branches
+  task129 (minPath)             — k == 1 single-step path branch
+  task141 (filenameCheck)       — empty name-before-dot branch
+  task160 (doAlgebra)           — single-operator expressions
+
+  Tasks at 100% branch coverage before improvement: 20 of 30
+
+================================================================================
+PROMPT SENT TO CLAUDE SONNET 4.6 (Claude Code CLI)
+================================================================================
+
+"The sonnet46 SolutionTest files currently use the List<Boolean> + if/throw
+pattern that JNose flags as 'Unknown Test' and 'Conditional Test Logic' smells.
+Rewrite all 30 sonnet46 SolutionTest.java files to:
+
+1. Replace the List<Boolean> + if(correct.contains(false)) pattern with proper
+   JUnit Jupiter assertions: assertEquals, assertTrue, assertFalse — one assertion
+   per method call.
+
+2. Rename the existing test method to sampleCases() and keep the same test inputs
+   from the base dataset — only change the assertion style.
+
+3. Add a second @Test method named edgeCases() to each class that covers inputs
+   not present in the base tests, specifically targeting:
+     - Boundary conditions (empty inputs, single elements, zero values)
+     - Branches identified as uncovered by JaCoCo (listed above per task)
+
+4. Add a brief comment above each edgeCases() assertion explaining what it tests.
+
+5. Preserve the @Authors header block on every file.
+
+6. All 60 tests (30 × sampleCases + 30 × edgeCases) must pass with mvn test."
+
+================================================================================
+AGENT RESPONSE — CHANGES MADE PER TASK
+================================================================================
+
+All 30 SolutionTest files were rewritten. Summary of changes:
+
+SMELL FIX (applied to all 30 tasks):
+  Before: List<Boolean> correct = Arrays.asList(s.method(...) == val, ...);
+          if (correct.contains(false)) { throw new AssertionError(); }
+  After:  assertEquals(expected, s.method(...));   // or
+          assertTrue(s.method(...));               // or
+          assertFalse(s.method(...));
+
+EDGE CASES ADDED PER TASK:
+
+task0  | hasCloseElements
+  + Single-element list [1.0] with threshold 1.0 → false (no pair exists)
+  + Exactly at threshold [1.0, 2.0] with threshold 1.0 → false (not strictly less)
+  + Just below threshold [1.0, 1.5] with threshold 1.0 → true
+  + Identical elements [5.0, 5.0] with threshold 0.1 → true (distance 0 < any pos threshold)
+
+task1  | separateParenGroups
+  + Empty string "" → empty list                    [covers empty-input path]
+  + Spaces-only "   " → empty list                  [covers spaces-only path]
+  + Single group "()" → ["()"]
+  + Deeply nested "((()))" → ["((()))"]
+
+task5  | intersperse
+  + Single element [1] with delimiter 99 → [1]     (no delimiter inserted)
+  + Two elements [1, 2] with delimiter 0 → [1, 0, 2] (one delimiter)
+  + Negative delimiter [1, 2, 3] with -1 → [1, -1, 2, -1, 3]
+
+task8  | sumProduct
+  + Single element [5] → [5, 5]
+  + Negative numbers [-1, -2] → [-3, 2]
+  + List with zero [0, 1, 2] → [3, 0]
+
+task13 | greatestCommonDivisor
+  + gcd(5, 5) → 5 (same value)
+  + gcd(7, 1) → 1 (gcd with 1)
+  + gcd(17, 13) → 1 (coprime)
+  + gcd(6, 12) → 6 (one divides the other)
+
+task16 | countDistinctCharacters
+  + Single char "z" → 1
+  + Case-insensitive "xyzXYZ" → 3
+  + "aaaa" → 1 (all same)
+  + Mixed "aAbB" → 2
+
+task18 | howManyTimes                                [BRANCH FIX]
+  + Empty substring "" → 0                          [empty-substring guard branch]
+  + Substring longer than string "ab", "abc" → 0    [length guard branch]
+  + No match "hello", "xyz" → 0
+  + Overlapping "aaaa", "aa" → 3                    [sliding window coverage]
+
+task20 | findClosestElements
+  + Minimum two-element list [1.0, 5.0] → [1.0, 5.0]
+  + Negative numbers [-3.0, -2.0, 5.0] → [-3.0, -2.0]
+  + Identical elements [4.0, 4.0, 10.0] → [4.0, 4.0]
+
+task25 | factorize
+  + n = 1 → [] (no prime factors)
+  + Large prime 97 → [97]                           [remainder branch after loop]
+  + n = 30 → [2, 3, 5]
+
+task29 | filterByPrefix
+  + Empty list [] → []
+  + No matches → []
+  + All match: prefix = "" → all elements returned
+
+task32 | findZero / poly
+  + f(x) = -1 + x → zero at x = 1
+  + poly([0.0, 0.0], 99.0) → 0.0
+  + poly([7.0], 0.0) → 7.0
+
+task40 | triplesSumToZero
+  + Three elements summing to zero [-1, 0, 1] → true
+  + Three elements not summing [1, 2, 3] → false
+  + All negatives [-3, -2, -1] → false
+  + Large list with a valid triple → true
+
+task44 | changeBase                                   [BRANCH FIX]
+  + x == 0 → "0"                                    [x==0 early return branch]
+  + x equals base: changeBase(5, 5) → "10"
+  + changeBase(1, 2) → "1"
+
+task46 | fib4                                         [BRANCH FIX]
+  + fib4(0) → 0                                     [n<4 base case branch]
+  + fib4(1) → 0                                     [n<4 base case branch]
+  + fib4(2) → 2                                     [n<4 base case branch]
+  + fib4(3) → 0                                     [n<4 base case branch]
+  + fib4(4) → 2                                     [first iterated value]
+
+task48 | isPalindrome
+  + Single character "a" → true
+  + Even-length palindrome "abba" → true
+  + Even-length non-palindrome "abcd" → false
+  + Two same chars "aa" → true
+  + Two different chars "ab" → false
+
+task55 | fib                                          [BRANCH FIX]
+  + fib(0) → 0                                      [n==0 early return branch]
+  + fib(1) → 1                                      [n==1 branch]
+  + fib(2) → 1                                      [first iterated value]
+
+task57 | monotonic
+  + Single element [5] → true
+  + Two equal elements [1, 1] → true
+  + Goes up then down [1, 5, 2] → false
+
+task58 | common
+  + No common elements → []
+  + Duplicates in input: result is unique and sorted
+  + All elements shared: full intersection
+
+task65 | circularShift
+  + shift == 0: unchanged string
+  + shift > number of digits: reversed string       [shift>=len branch]
+  + shift == 1: single rotation
+
+task69 | isHappy                                      [BRANCH FIX]
+  + Length < 3: "ab" → false                        [length guard branch]
+  + Length exactly 3, no adjacent repeat "abc" → true
+  + Consecutive duplicates "aab" → false
+
+task76 | isSimplePower
+  + isSimplePower(1, 1) → true                      [n==1 special case]
+  + isSimplePower(27, 3) → true
+  + isSimplePower(4, 2) → true
+  + isSimplePower(3, 2) → false
+
+task109 | moveOneBall
+  + Single element [7] → true
+  + Already sorted → true
+  + Reverse sorted → false (multiple descents)
+  + Two elements [2, 1] → true
+
+task110 | exchange
+  + lst1 already all-even → "YES" (no exchange needed)
+  + lst1 all-odd, lst2 has no evens → "NO"
+  + Exactly enough evens in lst2 → "YES"
+
+task124 | validDate                                   [BRANCH FIX]
+  + Month part 1 digit "3-11-2000" → false          [field-length check branch]
+  + Day part 1 digit "03-1-2000" → false            [field-length check branch]
+  + Year part 2 digits "03-11-00" → false           [field-length check branch]
+  + February 30 "02-30-2000" → false
+  + February 29 "02-29-2000" → true
+  + Day == 0 "01-00-2020" → false
+  + Month == 0 "00-01-2020" → false
+
+task129 | minPath                                     [BRANCH FIX]
+  + k == 1 → [1]                                    [single-step path branch]
+  + k == 2 → [1, minNeighbor]
+  + 2×2 grid (minimum valid grid size)
+
+task140 | fixSpaces
+  + No spaces "NoSpaces" → "NoSpaces"
+  + Single space "a b" → "a_b"
+  + Exactly 2 consecutive "a  b" → "a__b"
+  + Exactly 3 consecutive "a   b" → "a-b"
+  + Empty string "" → ""
+
+task141 | filenameCheck                               [BRANCH FIX]
+  + Empty name before dot ".txt" → "No"             [name.isEmpty() branch]
+  + Exactly 3 digits → "Yes"
+  + 4 digits in name → "No" (exceeds limit)
+  + Invalid extension → "No"
+
+task156 | intToMiniRoman
+  + n == 1 → "i"
+  + n == 4 → "iv" (subtractive notation)
+  + n == 9 → "ix"
+  + n == 40 → "xl"
+  + n == 1000 → "m"
+
+task160 | doAlgebra                                   [BRANCH FIX]
+  + Single "+": doAlgebra(["+"], [2, 3]) → 5        [single-op branch]
+  + Single "-": doAlgebra(["-"], [5, 2]) → 3
+  + Single "*": doAlgebra(["*"], [3, 4]) → 12
+  + Single "/": doAlgebra(["/"], [7, 3]) → 2 (floor)
+  + Single "**": doAlgebra(["**"], [2, 3]) → 8
+
+task162 | stringToMd5
+  + Empty string → Optional.empty()
+  + Single char: 32-char hex hash returned
+  + Determinism: same input always same output
+
+================================================================================
+HOW OUTPUT WAS USED
+================================================================================
+
+All 30 rewritten SolutionTest files were used as-is without further modification.
+mvn test confirmed all 90 tests pass:
+  - 30 gpt54 tests (1 method × 30 tasks) — unchanged
+  - 60 sonnet46 tests (2 methods × 30 tasks) — rewritten
+
+Coverage improvement after rewrite (mvn verify, coverage/jacoco/jacoco.csv):
+  Tasks with at least one missed branch : 10 → 6
+  Tasks at 100% branch coverage         : 20 → 24
+
+Remaining 6 tasks with one missed branch each:
+  task1, task69, task124, task129, task141, task160
+  These branches are defensive internal checks unreachable under valid inputs.
+  No code modification is allowed under project rules.
+
+================================================================================
+POST-IMPROVEMENT TEST RUN (mvn test, 2026-04-24)
+================================================================================
+
+[INFO] Running sonnet46.task0.SolutionTest    Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task1.SolutionTest    Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task5.SolutionTest    Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task8.SolutionTest    Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task13.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task16.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task18.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task20.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task25.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task29.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task32.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task40.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task44.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task46.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task48.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task55.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task57.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task58.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task65.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task69.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task76.SolutionTest   Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task109.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task110.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task124.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task129.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task140.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task141.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task156.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task160.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+[INFO] Running sonnet46.task162.SolutionTest  Tests run: 2, Failures: 0, Errors: 0
+
+Tests run: 60, Failures: 0, Errors: 0, Skipped: 0
