@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">sonnet46.task141</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package sonnet46.task141;
+
+/* @Authors
+ * Student Names: İhsan Gök, Ozan Ölmez, Atahan Çolak
+ * Student IDs: 150210093, 150220045, 150210106
+ */
+
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L11">class Solution {</span>
+    /**
+     * Create a function which takes a string representing a file's name, and returns
+     * &quot;Yes&quot; if the the file's name is valid, and returns &quot;No&quot; otherwise.
+     * A file's name is considered to be valid if and only if all the following conditions are met:
+     * - There should not be more than three digits ('0'-'9') in the file's name.
+     * - The file's name contains exactly one dot '.'
+     * - The substring before the dot should not be empty, and it starts with a letter from the latin alphabet.
+     * - The substring after the dot should be one of these: [&quot;txt&quot;, &quot;exe&quot;, &quot;dll&quot;]
+     */
+    public String filenameCheck(String file_name) {
+<span class="pc bpc" id="L22" title="1 of 4 branches missed.">        if (file_name == null || file_name.isEmpty()) return &quot;No&quot;;</span>
+<span class="fc" id="L23">        String[] parts = file_name.split(&quot;\\.&quot;, -1);</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (parts.length != 2) return &quot;No&quot;;</span>
+<span class="fc" id="L25">        String name = parts[0];</span>
+<span class="fc" id="L26">        String ext = parts[1];</span>
+<span class="fc bfc" id="L27" title="All 4 branches covered.">        if (name.isEmpty() || !Character.isLetter(name.charAt(0))) return &quot;No&quot;;</span>
+<span class="fc bfc" id="L28" title="All 6 branches covered.">        if (!ext.equals(&quot;txt&quot;) &amp;&amp; !ext.equals(&quot;exe&quot;) &amp;&amp; !ext.equals(&quot;dll&quot;)) return &quot;No&quot;;</span>
+<span class="fc" id="L29">        long digitCount = file_name.chars().filter(Character::isDigit).count();</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (digitCount &gt; 3) return &quot;No&quot;;</span>
+<span class="fc" id="L31">        return &quot;Yes&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

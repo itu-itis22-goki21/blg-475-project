@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">sonnet46.task129</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package sonnet46.task129;
+
+/* @Authors
+ * Student Names: İhsan Gök, Ozan Ölmez, Atahan Çolak
+ * Student IDs: 150210093, 150220045, 150210106
+ */
+
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L11">class Solution {</span>
+    /**
+     * Given a grid with N rows and N columns (N &gt;= 2) and a positive integer k,
+     * each cell of the grid contains a value. Every integer in the range [1, N*N]
+     * inclusive appears exactly once on the cells of the grid.
+     *
+     * You have to find the minimum path of length k in the grid.
+     * Return an ordered list of the values on the cells that the minimum path goes through.
+     *
+     * Input: grid = [[1,2,3],[4,5,6],[7,8,9]], k = 3 =&gt; Output: [1, 2, 1]
+     * Input: grid = [[5,9,3],[4,1,6],[7,8,2]], k = 1 =&gt; Output: [1]
+     */
+    public List&lt;Integer&gt; minPath(List&lt;List&lt;Integer&gt;&gt; grid, int k) {
+<span class="fc" id="L24">        int n = grid.size();</span>
+<span class="fc" id="L25">        int row = -1, col = -1;</span>
+        // Find position of cell with value 1
+        outer:
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        for (int i = 0; i &lt; n; i++) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">            for (int j = 0; j &lt; n; j++) {</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                if (grid.get(i).get(j) == 1) {</span>
+<span class="fc" id="L31">                    row = i;</span>
+<span class="fc" id="L32">                    col = j;</span>
+<span class="fc" id="L33">                    break outer;</span>
+                }
+            }
+        }
+        // Find minimum neighbor of cell 1
+<span class="fc" id="L38">        int minNeighbor = Integer.MAX_VALUE;</span>
+<span class="fc" id="L39">        int[][] dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        for (int[] d : dirs) {</span>
+<span class="fc" id="L41">            int nr = row + d[0], nc = col + d[1];</span>
+<span class="fc bfc" id="L42" title="All 8 branches covered.">            if (nr &gt;= 0 &amp;&amp; nr &lt; n &amp;&amp; nc &gt;= 0 &amp;&amp; nc &lt; n) {</span>
+<span class="fc" id="L43">                minNeighbor = Math.min(minNeighbor, grid.get(nr).get(nc));</span>
+            }
+        }
+        // Build the result: alternate 1 and minNeighbor
+<span class="fc" id="L47">        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (int i = 0; i &lt; k; i++) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            result.add(i % 2 == 0 ? 1 : minNeighbor);</span>
+        }
+<span class="fc" id="L51">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

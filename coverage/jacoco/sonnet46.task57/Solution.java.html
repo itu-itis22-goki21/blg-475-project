@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">sonnet46.task57</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package sonnet46.task57;
+
+/* @Authors
+ * Student Names: İhsan Gök, Ozan Ölmez, Atahan Çolak
+ * Student IDs: 150210093, 150220045, 150210106
+ */
+
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L11">class Solution {</span>
+    /**
+     * Return True if list elements are monotonically increasing or decreasing.
+     * &gt;&gt;&gt; monotonic(Arrays.asList(1, 2, 4, 20))
+     * true
+     * &gt;&gt;&gt; monotonic(Arrays.asList(1, 20, 4, 10))
+     * false
+     * &gt;&gt;&gt; monotonic(Arrays.asList(4, 1, 0, -10))
+     * true
+     */
+    public boolean monotonic(List&lt;Integer&gt; l) {
+<span class="fc" id="L22">        boolean increasing = true, decreasing = true;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        for (int i = 0; i &lt; l.size() - 1; i++) {</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            if (l.get(i) &gt; l.get(i + 1)) increasing = false;</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (l.get(i) &lt; l.get(i + 1)) decreasing = false;</span>
+        }
+<span class="fc bfc" id="L27" title="All 4 branches covered.">        return increasing || decreasing;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

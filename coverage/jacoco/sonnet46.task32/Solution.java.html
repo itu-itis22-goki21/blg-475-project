@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">sonnet46.task32</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package sonnet46.task32;
+
+/* @Authors
+ * Student Names: İhsan Gök, Ozan Ölmez, Atahan Çolak
+ * Student IDs: 150210093, 150220045, 150210106
+ */
+
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L11">class Solution {</span>
+    /**
+     * Evaluates polynomial with coefficients xs at point x.
+     * return xs[0] + xs[1] * x + xs[1] * x^2 + .... xs[n] * x^n
+     */
+    public double poly(List&lt;Double&gt; xs, double x) {
+<span class="fc" id="L17">        double result = 0;</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        for (int i = 0; i &lt; xs.size(); i++) {</span>
+<span class="fc" id="L19">            result += xs.get(i) * Math.pow(x, i);</span>
+        }
+<span class="fc" id="L21">        return result;</span>
+    }
+
+    /**
+     * xs are coefficients of a polynomial.
+     * findZero find x such that poly(x) = 0.
+     * findZero returns only one zero point, even if there are many.
+     * Moreover, findZero only takes list xs having even number of coefficients
+     * and largest non zero coefficient as it guarantees a solution.
+     * &gt;&gt;&gt; findZero(Arrays.asList(1, 2)) // f(x) = 1 + 2x
+     * -0.5
+     * &gt;&gt;&gt; findZero(Arrays.asList(-6, 11, -6, 1)) // (x-1)*(x-2)*(x-3)
+     * 1.0
+     */
+    public double findZero(List&lt;Double&gt; xs) {
+<span class="fc" id="L36">        double lo = -1, hi = 1;</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        while (poly(xs, lo) * poly(xs, hi) &gt; 0) {</span>
+<span class="fc" id="L38">            lo *= 2;</span>
+<span class="fc" id="L39">            hi *= 2;</span>
+        }
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (int i = 0; i &lt; 100; i++) {</span>
+<span class="fc" id="L42">            double mid = (lo + hi) / 2.0;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (poly(xs, lo) * poly(xs, mid) &lt;= 0) {</span>
+<span class="fc" id="L44">                hi = mid;</span>
+<span class="fc" id="L45">            } else {</span>
+<span class="fc" id="L46">                lo = mid;</span>
+            }
+        }
+<span class="fc" id="L49">        return (lo + hi) / 2.0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

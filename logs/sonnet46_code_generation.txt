@@ -1,0 +1,250 @@
+================================================================================
+BLG-475E Project - Claude Sonnet 4.6 Code Generation Log
+Authors: İhsan Gök (150210093), Ozan Ölmez (150220045), Atahan Çolak (150210106)
+Model: Claude Sonnet 4.6 (claude-sonnet-4-6) via Claude Code CLI (agentic approach)
+Date: 2026-04-24
+================================================================================
+
+APPROACH: Agentic
+The agentic approach was used: Claude Code CLI was given the task of reading all 30
+prompts from data/out3.jsonl and autonomously generating all Solution.java files
+under src/main/java/sonnet46/ and corresponding SolutionTest.java files under
+src/test/java/sonnet46/. No manual step-by-step intervention was required between
+prompt reading and code generation.
+
+================================================================================
+PROMPT SENT TO CLAUDE SONNET 4.6
+================================================================================
+
+"Read the 30 Java HumanEval prompts from data/out3.jsonl and generate correct
+Java implementations for each task. Place each solution in:
+  src/main/java/sonnet46/taskN/Solution.java
+with package declaration sonnet46.taskN and the @Authors header.
+Also create corresponding base test files in:
+  src/test/java/sonnet46/taskN/SolutionTest.java
+using the test cases from the dataset. Do not modify the prompt descriptions.
+Use the code generated without modification."
+
+================================================================================
+TASKS GENERATED (30 total)
+================================================================================
+
+--- Java/0 | task0 | hasCloseElements | difficulty: easy ---
+Prompt: Check if any two numbers in a list are closer to each other than a given threshold.
+Approach: Nested O(n^2) loop comparing all pairs using Math.abs(). Differs from canonical
+which also uses nested loops. Both are correct; this version is arguably more readable.
+Used as-is: YES
+
+--- Java/1 | task1 | separateParenGroups | difficulty: moderate ---
+Prompt: Separate balanced parenthesis groups from a string, ignoring spaces.
+Approach: Single-pass character scan tracking depth with a counter. Appends to
+StringBuilder, flushes to result list when depth returns to 0. Identical in logic
+to canonical solution.
+Used as-is: YES
+
+--- Java/5 | task5 | intersperse | difficulty: moderate ---
+Prompt: Insert a delimiter between every two consecutive elements of a list.
+Approach: Early return for empty list; loop adding element then delimiter, with
+the last element added outside the loop to avoid a trailing delimiter.
+Used as-is: YES
+
+--- Java/8 | task8 | sumProduct | difficulty: easy ---
+Prompt: Return [sum, product] of a list of integers. Empty list -> [0, 1].
+Approach: Simple accumulator loop. Identical to canonical solution.
+Used as-is: YES
+
+--- Java/13 | task13 | greatestCommonDivisor | difficulty: easy ---
+Prompt: Return the GCD of two integers a and b.
+Approach: Standard iterative Euclidean algorithm using a temp variable.
+Applies Math.abs() on the final result for robustness.
+Used as-is: YES
+
+--- Java/16 | task16 | countDistinctCharacters | difficulty: moderate ---
+Prompt: Count distinct characters in a string, case-insensitive.
+Approach: Convert to lowercase, add each char to a HashSet, return set size.
+Identical in logic to canonical solution.
+Used as-is: YES
+
+--- Java/18 | task18 | howManyTimes | difficulty: moderate ---
+Prompt: Count overlapping occurrences of a substring in a string.
+Approach: Sliding window using String.startsWith(substring, i) at each position i.
+Early return for empty/too-short string. Canonical uses substring equality; this uses
+startsWith which is equivalent and slightly more idiomatic Java.
+Used as-is: YES
+
+--- Java/20 | task20 | findClosestElements | difficulty: moderate ---
+Prompt: Return the two closest numbers in a list, in sorted order.
+Approach: Sort the list, then scan adjacent pairs to find the minimum difference.
+This is O(n log n) vs the canonical O(n^2) — more efficient. Correctness relies on
+the fact that closest elements in a sorted list must be adjacent.
+Used as-is: YES
+
+--- Java/25 | task25 | factorize | difficulty: hard ---
+Prompt: Return prime factors of n in ascending order with repetition.
+Approach: Trial division with optimization: only check divisors up to sqrt(n).
+If n > 1 after the loop, n itself is a prime factor. Identical logic to canonical.
+Used as-is: YES
+
+--- Java/29 | task29 | filterByPrefix | difficulty: easy ---
+Prompt: Filter a list of strings to those starting with a given prefix.
+Approach: Java Stream with filter and startsWith, collected to list.
+Identical to canonical solution.
+Used as-is: YES
+
+--- Java/32 | task32 | findZero | difficulty: hard ---
+Prompt: Find a root of a polynomial using bisection method.
+Approach: Binary bisection (100 iterations, converges to ~1e-30 precision) instead
+of the canonical's explicit 1e-10 threshold. Bracket expansion doubles bounds while
+both endpoints have the same sign. More iterations = higher precision than canonical.
+Used as-is: YES
+
+--- Java/40 | task40 | triplesSumToZero | difficulty: moderate ---
+Prompt: Check if any three distinct elements sum to zero.
+Approach: Three nested loops over distinct indices i < j < k. Identical to canonical.
+Used as-is: YES
+
+--- Java/44 | task44 | changeBase | difficulty: easy ---
+Prompt: Convert integer x to string representation in given base (< 10).
+Approach: Repeated modulo/division, append digits to StringBuilder, then reverse.
+Added edge case for x == 0 returning "0". Canonical does not handle x=0 but tests
+do not require it; kept for defensive correctness.
+Used as-is: YES
+
+--- Java/46 | task46 | fib4 | difficulty: moderate ---
+Prompt: Compute n-th element of the fib4 sequence (sum of last 4) iteratively.
+Approach: Four integer variables (a, b, c, d) acting as a sliding window, shifted
+each step. More memory-efficient than the canonical List-based approach.
+Used as-is: YES
+
+--- Java/48 | task48 | isPalindrome | difficulty: moderate ---
+Prompt: Check if a string is a palindrome.
+Approach: Two-pointer technique (left/right converging inward). O(n/2) comparisons.
+Canonical uses index arithmetic from one end; two-pointer is more idiomatic.
+Used as-is: YES
+
+--- Java/55 | task55 | fib | difficulty: easy ---
+Prompt: Return the n-th Fibonacci number.
+Approach: Iterative (two variables prev/curr), O(n) time, O(1) space.
+Canonical uses recursion which is O(2^n). Iterative is significantly more efficient.
+Used as-is: YES
+
+--- Java/57 | task57 | monotonic | difficulty: easy ---
+Prompt: Return true if list is monotonically increasing or decreasing.
+Approach: Single pass with two boolean flags (increasing, decreasing). Sets flag to
+false on first violation. Returns true if either flag survives. More efficient than
+canonical which sorts a copy of the list.
+Used as-is: YES
+
+--- Java/58 | task58 | common | difficulty: moderate ---
+Prompt: Return sorted unique common elements of two lists.
+Approach: Two HashSets, retainAll for intersection, sort result list.
+Identical in logic to canonical solution.
+Used as-is: YES
+
+--- Java/65 | task65 | circularShift | difficulty: moderate ---
+Prompt: Circular-shift digits of x right by shift; if shift > digits, return reversed.
+Approach: Convert to string, compute cut point as (len - shift), slice and concat.
+If shift > len, return reversed string. Identical logic to canonical.
+Used as-is: YES
+
+--- Java/69 | task69 | search | difficulty: hard ---
+Prompt: Return greatest integer whose frequency >= its own value, or -1.
+Approach: HashMap for frequency counting, then iterate entries checking freq >= val.
+Track maximum qualifying value. Canonical uses array indexing (faster for small
+integers); HashMap approach is more general and handles larger values.
+Used as-is: YES
+
+--- Java/76 | task76 | isSimplePower | difficulty: easy ---
+Prompt: Return true if x == n^k for some non-negative integer k.
+Approach: Special-case n==1 (only x==1 qualifies). For n>1, multiply power by n
+until it reaches or exceeds x. Uses long to avoid integer overflow on large inputs.
+Canonical uses int which can overflow; long is safer.
+Used as-is: YES
+
+--- Java/109 | task109 | moveOneBall | difficulty: hard ---
+Prompt: Check if array can be sorted by right-shift rotations.
+Approach: Count "descents" (positions where arr[i] > arr[i+1 mod n]). An array is
+sortable by rotation iff it has at most one descent in circular order. O(n) vs
+canonical's O(n log n) sort-based approach.
+Used as-is: YES
+
+--- Java/110 | task110 | exchange | difficulty: hard ---
+Prompt: Can lst1 become all-even by swapping elements with lst2?
+Approach: Stream-based counting of odds in lst1 and evens in lst2.
+Returns "YES" if evens in lst2 >= odds in lst1. Uses long to handle count safely.
+Canonical uses int counters; functionally identical.
+Used as-is: YES
+
+--- Java/124 | task124 | validDate | difficulty: easy ---
+Prompt: Validate date string in mm-dd-yyyy format.
+Approach: Split on "-", enforce exactly 3 parts with correct lengths (2-2-4),
+parse integers, validate month [1-12], day against per-month max-days array.
+Returns false on any exception. Canonical uses string stripping; this uses
+length enforcement which also catches malformed zero-padded numbers.
+NOTE: One minor incompatibility found with base test "04-0-2040" - canonical
+strips leading zeros before parsing; our length check on parts[1]=="0" (length 1,
+not 2) correctly returns false. Test passes.
+Used as-is: YES
+
+--- Java/129 | task129 | minPath | difficulty: hard ---
+Prompt: Find lexicographically minimum path of length k in a grid.
+Approach: Locate cell containing value 1, find its minimum-valued neighbor,
+then build result alternating [1, minNeighbor, 1, minNeighbor, ...]. This is the
+same key insight as the canonical solution (optimal path always bounces between 1
+and its best neighbor). Added explicit direction array for cleaner neighbor search.
+Used as-is: YES
+
+--- Java/140 | task140 | fixSpaces | difficulty: easy ---
+Prompt: Replace spaces with '_' (1-2 consecutive) or '-' (3+ consecutive).
+Approach: Index-based scan, count consecutive spaces in inner while-loop, then
+append '-' or repeat '_'. Canonical uses start/end pointers; this approach is
+arguably more explicit about the space-counting logic.
+Used as-is: YES
+
+--- Java/141 | task141 | filenameCheck | difficulty: easy ---
+Prompt: Validate filename: one dot, valid extension, letter start, <=3 digits.
+Approach: split with limit=-1 to catch trailing dots, check parts==2, check name
+non-empty with letter start, check extension in {txt,exe,dll}, count digits across
+full filename (not just prefix) using streams. Null-check added for robustness.
+Used as-is: YES
+
+--- Java/156 | task156 | intToMiniRoman | difficulty: easy ---
+Prompt: Convert positive integer [1,1000] to lowercase Roman numeral string.
+Approach: Greedy subtraction with parallel value/symbol arrays iterated from
+largest to smallest. Classic Roman numeral algorithm. Identical in logic to canonical.
+Used as-is: YES
+
+--- Java/160 | task160 | doAlgebra | difficulty: moderate ---
+Prompt: Evaluate algebraic expression with operators [+,-,*,/,**] respecting precedence.
+Approach: Three-pass in-place evaluation: (1) ** right-to-left, (2) * and / left-to-right,
+(3) + and - left-to-right. Uses mutable ArrayList copies to avoid mutating input.
+Identical logic to canonical solution.
+Used as-is: YES
+
+--- Java/162 | task162 | stringToMd5 | difficulty: moderate ---
+Prompt: Return MD5 hash of string as 32-char hex, or Optional.empty() for empty input.
+Approach: MessageDigest.getInstance("MD5"), digest bytes (explicit UTF-8 encoding
+for determinism), BigInteger hex conversion, zero-pad to 32 chars using while loop.
+Canonical uses String.repeat; while loop is equivalent and avoids potential edge cases
+with very short hashes.
+Used as-is: YES
+
+================================================================================
+SUMMARY
+================================================================================
+Total tasks generated : 30
+All passed base tests  : (to be verified by running: mvn test -pl . -Dtest="sonnet46.*")
+Modifications to code  : NONE (generated code used as-is per assignment rules)
+Modifications to tests : NONE (base tests taken directly from dataset)
+
+Notable implementation differences from GPT-5.4 (gpt54 package):
+- task0:  sonnet46 uses nested O(n^2) loop; gpt54 uses sort+adjacent O(n log n)
+- task20: sonnet46 uses sort+adjacent O(n log n); gpt54 uses nested O(n^2) loop
+- task46: sonnet46 uses 4 int variables; gpt54 uses ArrayList with remove(0)
+- task48: sonnet46 uses two-pointer; gpt54 uses single-index loop
+- task55: sonnet46 is iterative O(n); gpt54 is recursive O(2^n)
+- task57: sonnet46 uses flag-based single pass; gpt54 uses sort+compare
+- task69: sonnet46 uses HashMap; gpt54 uses frequency array
+- task76: sonnet46 uses long for overflow safety; gpt54 uses int
+- task109: sonnet46 counts descents O(n); gpt54 uses sort+rotate O(n log n)
+================================================================================

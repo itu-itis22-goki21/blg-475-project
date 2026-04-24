@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Solution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">blg-475-project</a> &gt; <a href="index.source.html" class="el_package">sonnet46.task162</a> &gt; <span class="el_source">Solution.java</span></div><h1>Solution.java</h1><pre class="source lang-java linenums">package sonnet46.task162;
+
+/* @Authors
+ * Student Names: İhsan Gök, Ozan Ölmez, Atahan Çolak
+ * Student IDs: 150210093, 150220045, 150210106
+ */
+
+import java.math.BigInteger;
+import java.security.*;
+import java.util.*;
+import java.lang.*;
+
+<span class="fc" id="L13">class Solution {</span>
+    /**
+     * Given a string &quot;text&quot;, return its md5 hash equivalent string with length being 32.
+     * If &quot;text&quot; is an empty string, return Optional.empty().
+     *
+     * &gt;&gt;&gt; stringToMd5(&quot;Hello world&quot;) == &quot;3e25960a79dbc69b674cd4ec67a72c62&quot;
+     */
+    public Optional&lt;String&gt; stringToMd5(String text) throws NoSuchAlgorithmException {
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (text.isEmpty()) {</span>
+<span class="fc" id="L22">            return Optional.empty();</span>
+        }
+<span class="fc" id="L24">        byte[] digest = MessageDigest.getInstance(&quot;MD5&quot;).digest(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));</span>
+<span class="fc" id="L25">        String hex = new BigInteger(1, digest).toString(16);</span>
+        // Pad to 32 characters with leading zeros
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        while (hex.length() &lt; 32) {</span>
+<span class="fc" id="L28">            hex = &quot;0&quot; + hex;</span>
+        }
+<span class="fc" id="L30">        return Optional.of(hex);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
