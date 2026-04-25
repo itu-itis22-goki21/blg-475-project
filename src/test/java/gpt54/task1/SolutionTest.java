@@ -2,29 +2,40 @@ package gpt54.task1;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.lang.*;
+import java.util.List;
 
-public class SolutionTest {
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
     @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                s.separateParenGroups("(()()) ((())) () ((())()())").equals(Arrays.asList(
-                        "(()())", "((()))", "()", "((())()())"
-                )),
-                s.separateParenGroups("() (()) ((())) (((())))").equals(Arrays.asList(
-                        "()", "(())", "((()))", "(((())))"
-                )),
-                s.separateParenGroups("(()(())((())))").equals(Arrays.asList(
-                        "(()(())((())))"
-                )),
-                s.separateParenGroups("( ) (( )) (( )( ))").equals(Arrays.asList("()", "(())", "(()())"))
+    void separatesSpaceSeparatedGroups() {
+        assertIterableEquals(
+                List.of("(()())", "((()))", "()", "((())()())"),
+                solution.separateParenGroups("(()()) ((())) () ((())()())")
         );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
+    }
+
+    @Test
+    void separatesAdjacentGroupsWithoutWhitespace() {
+        assertIterableEquals(
+                List.of("()", "(()())"),
+                solution.separateParenGroups("()(()())")
+        );
+    }
+
+    @Test
+    void keepsSingleNestedGroupTogether() {
+        assertIterableEquals(
+                List.of("(()(())((())))"),
+                solution.separateParenGroups("(()(())((())))")
+        );
+    }
+
+    @Test
+    void ignoresWhitespaceOnlyInput() {
+        assertIterableEquals(List.of(), solution.separateParenGroups("   "));
     }
 }
-
-

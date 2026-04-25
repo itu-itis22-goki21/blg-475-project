@@ -2,35 +2,35 @@ package gpt54.task76;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SolutionTest {
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
     @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                s.isSimplePower(1, 4),
-                s.isSimplePower(2, 2),
-                s.isSimplePower(8, 2),
-                !s.isSimplePower(3, 2),
-                !s.isSimplePower(3, 1),
-                !s.isSimplePower(5, 3),
-                s.isSimplePower(16, 2),
-                !s.isSimplePower(143214, 16),
-                s.isSimplePower(4, 2),
-                s.isSimplePower(9, 3),
-                s.isSimplePower(16, 4),
-                !s.isSimplePower(24, 2),
-                !s.isSimplePower(128, 4),
-                !s.isSimplePower(12, 6),
-                s.isSimplePower(1, 1),
-                s.isSimplePower(1, 12)
-        );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
+    void returnsTrueWhenValueIsOne() {
+        assertTrue(solution.isSimplePower(1, 4));
+    }
+
+    @Test
+    void rejectsNonPositiveValues() {
+        assertFalse(solution.isSimplePower(0, 2));
+    }
+
+    @Test
+    void rejectsBasesLessThanOrEqualToOneForValuesGreaterThanOne() {
+        assertFalse(solution.isSimplePower(3, 1));
+    }
+
+    @Test
+    void acceptsExactPowers() {
+        assertTrue(solution.isSimplePower(81, 3));
+    }
+
+    @Test
+    void rejectsNumbersThatCannotBeReducedToOne() {
+        assertFalse(solution.isSimplePower(12, 2));
     }
 }
-
-

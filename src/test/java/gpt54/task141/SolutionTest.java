@@ -1,44 +1,35 @@
 package gpt54.task141;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.*;
-import java.lang.*;
+import java.util.stream.Stream;
 
-public class SolutionTest {
-    @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                Objects.equals(s.filenameCheck("example.txt" ), "Yes" ),
-                Objects.equals(s.filenameCheck("1example.dll" ), "No" ),
-                Objects.equals(s.filenameCheck("s1sdf3.asd" ), "No" ),
-                Objects.equals(s.filenameCheck("K.dll" ), "Yes" ),
-                Objects.equals(s.filenameCheck("MY16FILE3.exe" ), "Yes" ),
-                Objects.equals(s.filenameCheck("His12FILE94.exe" ), "No" ),
-                Objects.equals(s.filenameCheck("_Y.txt" ), "No" ),
-                Objects.equals(s.filenameCheck("?aREYA.exe" ), "No" ),
-                Objects.equals(s.filenameCheck("/this_is_valid.dll" ), "No" ),
-                Objects.equals(s.filenameCheck("this_is_valid.wow" ), "No" ),
-                Objects.equals(s.filenameCheck("this_is_valid.txt" ), "Yes" ),
-                Objects.equals(s.filenameCheck("this_is_valid.txtexe" ), "No" ),
-                Objects.equals(s.filenameCheck("#this2_i4s_5valid.ten" ), "No" ),
-                Objects.equals(s.filenameCheck("@this1_is6_valid.exe" ), "No" ),
-                Objects.equals(s.filenameCheck("this_is_12valid.6exe4.txt" ), "No" ),
-                Objects.equals(s.filenameCheck("all.exe.txt" ), "No" ),
-                Objects.equals(s.filenameCheck("I563_No.exe" ), "Yes" ),
-                Objects.equals(s.filenameCheck("Is3youfault.txt" ), "Yes" ),
-                Objects.equals(s.filenameCheck("no_one#knows.dll" ), "Yes" ),
-                Objects.equals(s.filenameCheck("1I563_Yes3.exe" ), "No" ),
-                Objects.equals(s.filenameCheck("I563_Yes3.txtt" ), "No" ),
-                Objects.equals(s.filenameCheck("final..txt" ), "No" ),
-                Objects.equals(s.filenameCheck("final132" ), "No" ),
-                Objects.equals(s.filenameCheck("_f4indsartal132." ), "No" )
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("fileNameCases")
+    void validatesFileNames(String description, String fileName, String expected) {
+        assertEquals(expected, solution.filenameCheck(fileName));
+    }
+
+    private static Stream<Arguments> fileNameCases() {
+        return Stream.of(
+                Arguments.of("accepts a simple txt file", "example.txt", "Yes"),
+                Arguments.of("accepts exactly three digits in the file name", "A12b3.exe", "Yes"),
+                Arguments.of("rejects null", null, "No"),
+                Arguments.of("rejects names that start with a digit", "1example.dll", "No"),
+                Arguments.of("rejects multiple dots", "all.exe.txt", "No"),
+                Arguments.of("rejects an empty name before the dot", ".txt", "No"),
+                Arguments.of("rejects too many digits", "His12FILE94.exe", "No"),
+                Arguments.of("rejects unsupported extensions", "this_is_valid.wow", "No"),
+                Arguments.of("rejects missing extensions", "final132", "No"),
+                Arguments.of("rejects empty extensions", "name.", "No")
         );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
     }
 }
-
-

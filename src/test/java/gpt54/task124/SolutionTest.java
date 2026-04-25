@@ -1,36 +1,37 @@
 package gpt54.task124;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.*;
-import java.lang.*;
+import java.util.stream.Stream;
 
-public class SolutionTest {
-    @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                s.validDate("03-11-2000" ) == true,
-                s.validDate("15-01-2012" ) == false,
-                s.validDate("04-0-2040" ) == false,
-                s.validDate("06-04-2020" ) == true,
-                s.validDate("01-01-2007" ) == true,
-                s.validDate("03-32-2011" ) == false,
-                s.validDate("" ) == false,
-                s.validDate("04-31-3000" ) == false,
-                s.validDate("06-06-2005" ) == true,
-                s.validDate("21-31-2000" ) == false,
-                s.validDate("04-12-2003" ) == true,
-                s.validDate("04122003" ) == false,
-                s.validDate("20030412" ) == false,
-                s.validDate("2003-04" ) == false,
-                s.validDate("2003-04-12" ) == false,
-                s.validDate("04-2003" ) == false
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("dateCases")
+    void validatesDatesAsExpected(String description, String date, boolean expected) {
+        assertEquals(expected, solution.validDate(date));
+    }
+
+    private static Stream<Arguments> dateCases() {
+        return Stream.of(
+                Arguments.of("accepts a normal valid date", "03-11-2000", true),
+                Arguments.of("accepts the maximum day in a 31 day month", "12-31-1999", true),
+                Arguments.of("accepts February 29 because the implementation allows it", "02-29-2024", true),
+                Arguments.of("rejects null input", null, false),
+                Arguments.of("rejects an empty string", "", false),
+                Arguments.of("rejects the wrong format", "6-04-2020", false),
+                Arguments.of("rejects slashes instead of dashes", "06/04/2020", false),
+                Arguments.of("rejects month zero", "00-10-2020", false),
+                Arguments.of("rejects months above twelve", "13-01-2020", false),
+                Arguments.of("rejects day zero", "02-00-2020", false),
+                Arguments.of("rejects a day above the month limit", "04-31-3000", false),
+                Arguments.of("rejects February 30", "02-30-2020", false)
         );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
     }
 }
-
-

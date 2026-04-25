@@ -2,24 +2,36 @@ package gpt54.task8;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.lang.*;
+import java.util.List;
 
-public class SolutionTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
     @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                s.sumProduct(new ArrayList<>(List.of())).equals(Arrays.asList(0, 1)),
-                s.sumProduct(new ArrayList<>(Arrays.asList(1, 1, 1))).equals(Arrays.asList(3, 1)),
-                s.sumProduct(new ArrayList<>(Arrays.asList(100, 0))).equals(Arrays.asList(100, 0)),
-                s.sumProduct(new ArrayList<>(Arrays.asList(3, 5, 7))).equals(Arrays.asList(3 + 5 + 7, 3 * 5 * 7)),
-                s.sumProduct(new ArrayList<>(List.of(10))).equals(Arrays.asList(10, 10))
-        );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
+    void returnsIdentityValuesForEmptyList() {
+        assertEquals(List.of(0, 1), solution.sumProduct(List.of()));
+    }
+
+    @Test
+    void returnsSameNumberForSingleElementList() {
+        assertEquals(List.of(10, 10), solution.sumProduct(List.of(10)));
+    }
+
+    @Test
+    void returnsZeroProductWhenAnyElementIsZero() {
+        assertEquals(List.of(100, 0), solution.sumProduct(List.of(100, 0)));
+    }
+
+    @Test
+    void handlesMultiplePositiveNumbers() {
+        assertEquals(List.of(15, 105), solution.sumProduct(List.of(3, 5, 7)));
+    }
+
+    @Test
+    void handlesNegativeValues() {
+        assertEquals(List.of(-2, -10), solution.sumProduct(List.of(-5, 1, 2)));
     }
 }
-
-

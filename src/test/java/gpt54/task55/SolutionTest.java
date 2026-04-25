@@ -1,25 +1,25 @@
 package gpt54.task55;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.*;
-import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SolutionTest {
-    @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                s.fib(10) == 55,
-                s.fib(1) == 1,
-                s.fib(8) == 21,
-                s.fib(11) == 89,
-                s.fib(12) == 144
-        );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
+    @ParameterizedTest(name = "fib({0}) = {1}")
+    @CsvSource({
+            "-5, 0",
+            "0, 0",
+            "1, 1",
+            "2, 1",
+            "8, 21",
+            "10, 55",
+            "12, 144"
+    })
+    void computesFibonacciValues(int n, int expected) {
+        assertEquals(expected, solution.fib(n));
     }
 }
-
-

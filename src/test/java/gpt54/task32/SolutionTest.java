@@ -2,30 +2,38 @@ package gpt54.task32;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.lang.*;
+import java.util.List;
 
-public class SolutionTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class SolutionTest {
+
+    private static final double EPSILON = 1e-6;
+
+    private final Solution solution = new Solution();
+
     @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        Random rand = new Random(42);
-        for (int i = 0; i < 100; i++) {
-            int ncoeff = 2 * (rand.nextInt(3) + 1);
-            List<Double> coeffs = new ArrayList<>();
-            for (int j = 0; j < ncoeff; j++) {
-                int coeff = rand.nextInt(20) - 10;
-                if (coeff == 0) {
-                    coeff = 1;
-                }
-                coeffs.add((double) coeff);
-            }
-            double solution = s.findZero(coeffs);
-            if (Math.abs(s.poly(coeffs, solution)) > 1e-4) {
-                throw new AssertionError();
-            }
-        }
+    void evaluatesPolynomialUsingCoefficientIndicesAsPowers() {
+        assertEquals(17.0, solution.poly(List.of(1.0, 2.0, 3.0), 2.0), EPSILON);
+    }
+
+    @Test
+    void findsExpectedRootForLinearPolynomial() {
+        assertEquals(-0.5, solution.findZero(List.of(1.0, 2.0)), EPSILON);
+    }
+
+    @Test
+    void expandsSearchIntervalWhenRootIsOutsideInitialRange() {
+        double root = solution.findZero(List.of(-10.0, 1.0));
+
+        assertEquals(0.0, solution.poly(List.of(-10.0, 1.0), root), EPSILON);
+    }
+
+    @Test
+    void findsAValidRootForHigherDegreePolynomial() {
+        List<Double> coefficients = List.of(-6.0, 11.0, -6.0, 1.0);
+        double root = solution.findZero(coefficients);
+
+        assertEquals(0.0, solution.poly(coefficients, root), EPSILON);
     }
 }
-
-

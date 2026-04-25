@@ -2,23 +2,29 @@ package gpt54.task18;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SolutionTest {
+class SolutionTest {
+
+    private final Solution solution = new Solution();
+
     @Test
-    void sampleCases()  {
-        Solution s = new Solution();
-        List<Boolean> correct = Arrays.asList(
-                s.howManyTimes("", "x") == 0,
-                s.howManyTimes("xyxyxyx", "x") == 4,
-                s.howManyTimes("cacacacac", "cac") == 4,
-                s.howManyTimes("john doe", "john") == 1
-        );
-        if (correct.contains(false)) {
-            throw new AssertionError();
-        }
+    void returnsZeroForEmptySubstring() {
+        assertEquals(0, solution.howManyTimes("abc", ""));
+    }
+
+    @Test
+    void returnsZeroWhenSubstringIsLongerThanString() {
+        assertEquals(0, solution.howManyTimes("ab", "abc"));
+    }
+
+    @Test
+    void countsOverlappingMatches() {
+        assertEquals(3, solution.howManyTimes("aaaa", "aa"));
+    }
+
+    @Test
+    void countsSeparatedOccurrences() {
+        assertEquals(2, solution.howManyTimes("banana", "ana"));
     }
 }
-
-
