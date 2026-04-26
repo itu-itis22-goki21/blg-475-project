@@ -1,0 +1,28 @@
+package gpt54.task109;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class MutationDatasetTest {
+
+    @Test
+    void runsDatasetMutationChecks() {
+        Solution s = new Solution();
+
+        assertAll(
+                () -> assertTrue(s.moveOneBall(List.of())),
+                () -> assertTrue(s.moveOneBall(List.of(5))),
+                () -> assertTrue(s.moveOneBall(List.of(1, 2, 3, 4))),
+                () -> assertTrue(s.moveOneBall(List.of(2, 3, 4, 1))),
+                () -> assertTrue(s.moveOneBall(List.of(3, 4, 5, 1, 2))),
+                () -> assertTrue(s.moveOneBall(List.of(3, 5, 10, 1, 2))),
+                () -> assertFalse(s.moveOneBall(List.of(4, 3, 1, 2))),
+                () -> assertFalse(s.moveOneBall(List.of(3, 5, 4, 1, 2)))
+        );
+    }
+}
