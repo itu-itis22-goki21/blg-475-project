@@ -1,0 +1,1213 @@
+""" @Authors
+* Student Names: İhsan Gök, Ozan ölmez, Atahan Çolak
+* Student IDs: 150210093, 150220045, 150210106
+"""
+
+# Mutation phase
+
+# Usage note
+Used GPT-5.4 to perform equivalence class partitioning and boundary analysis.
+Identified missing edge cases and boundary conditions.
+Generated additional tests using mutation strategy.
+Improved overall EC coverage:
+- Total equivalence classes: 296
+- Covered by base tests: 109 / 296 = 36.82%
+- Covered by mutated tests: 241 / 296 = 81.42%
+- Improvement: +132 ECs = +44.60 percentage points
+- Still uncovered after mutation: 55 / 296 = 18.58%
+
+
+## prompt
+@src/test/java/gpt54  I want you to apply mutations to the base tests that are named as MutationDatasetTest @data/ecs.xlsx you should apply mutations according to this xlsx file which contains equivalence class partition.
+
+Explain:
+- what mutations were applied
+- why they improve test effectiveness
+
+do not check or modify implementation codes, data/ and sonnet files, focus only on test design and evaluation
+
+
+## Response
+I’m going to inspect the existing MutationDatasetTest files and the equivalence classes in data/ecs.xlsx, then I’ll update only the test files under src/test/java/gpt54 to reflect those mutations.
+
+I’ve confirmed there are 30 gpt54 mutation test files to adjust. Next I’m extracting the equivalence-class definitions from data/ecs.xlsx and comparing them against the current test patterns so I can mutate only the tests, not the implementations.
+
+The workbook inspection failed because the Python Excel library isn’t installed, so I’m switching to a direct .xlsx unzip/XML parse. That keeps the work read-only and still lets me derive the mutation rules from the sheet.
+
+I’ve verified the workbook has one sheet per gpt54 task, which matches the 30 test files. I’m dumping the sheet rows now so I can map each equivalence class directly into stronger test cases for each corresponding task.
+
+I’ve got the equivalence-class matrix. Now I’m reading every existing MutationDatasetTest so I can add only the missing partitions and boundary checks that the workbook marks as uncovered.
+
+I have most of the sheet matrix now. I’m pulling a few remaining task-specific partitions where the earlier dump was truncated, then I’ll batch-edit the affected tests and run the gpt54 test suite to verify the mutations.
+
+The remaining gaps are clear now, including the boundary-heavy tasks like fib4, fib, and isPalindrome. I’m checking the test harness next so I can validate the mutated tests without touching any implementation files.
+
+I’m replacing the generated boolean-list checks with targeted JUnit assertions now. The edits add missing boundary classes, invalid-input classes where the type system allows them, and tie/degenerate cases that the workbook marked as uncovered.
+
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.hasCloseElements(new ArrayList<>(Arrays.asList(11.0, 2.0, 3.9, 4.0, 5.0, 2.2)), 0.3),
+                !s.hasCloseElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 3.9, 4.0, 5.0, 2.2)), 0.05),
+                s.hasCloseElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 5.9, 4.0, 5.0)), 0.95),
+                !s.hasCloseElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 5.9, 4.0, 5.0)), 0.8),
+                s.hasCloseElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 2.0)), 0.1),
+                s.hasCloseElements(new ArrayList<>(Arrays.asList(1.1, 2.2, 3.1, 4.1, 5.1)), 1.0),
+                !s.hasCloseElements(new ArrayList<>(Arrays.asList(1.1, 2.2, 3.1, 4.1, 5.1)), 0.5)
+        assertAll(
+                () -> assertFalse(s.hasCloseElements(List.of(), 0.3)),
+                () -> assertFalse(s.hasCloseElements(List.of(7.0), 0.3)),
+                () -> assertTrue(s.hasCloseElements(List.of(11.0, 2.0, 3.9, 4.0, 5.0, 2.2), 0.3)),
+                () -> assertFalse(s.hasCloseElements(List.of(1.0, 2.0, 3.9, 4.0, 5.0, 2.2), 0.05)),
+                () -> assertTrue(s.hasCloseElements(List.of(1.0, 2.0, 5.9, 4.0, 5.0), 0.95)),
+                () -> assertFalse(s.hasCloseElements(List.of(1.0, 2.0, 5.9, 4.0, 5.0), 0.8)),
+                () -> assertTrue(s.hasCloseElements(List.of(1.0, 2.0, 3.0, 4.0, 5.0, 2.0), 0.1)),
+                () -> assertFalse(s.hasCloseElements(List.of(1.0, 2.0, 2.0, 3.0), 0.0)),
+                () -> assertFalse(s.hasCloseElements(List.of(1.0, 1.3), 0.3)),
+                () -> assertTrue(s.hasCloseElements(List.of(1.1, 2.2, 3.1, 4.1, 5.1), 1.0)),
+                () -> assertFalse(s.hasCloseElements(List.of(1.1, 2.2, 3.1, 4.1, 5.1), 0.5))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.separateParenGroups("(()()) ((())) () ((())()())").equals(Arrays.asList(
+                        "(()())", "((()))", "()", "((())()())"
+                )),
+                s.separateParenGroups("() (()) ((())) (((())))").equals(Arrays.asList(
+                        "()", "(())", "((()))", "(((())))"
+                )),
+                s.separateParenGroups("(()(())((())))").equals(Arrays.asList(
+                        "(()(())((())))"
+                )),
+                s.separateParenGroups("( ) (( )) (( )( ))").equals(Arrays.asList("()", "(())", "(()())"))
+        assertAll(
+                () -> assertEquals(List.of(), s.separateParenGroups("")),
+                () -> assertEquals(List.of(), s.separateParenGroups("   ")),
+                () -> assertEquals(List.of("()"), s.separateParenGroups("()")),
+                () -> assertEquals(List.of("((()))"), s.separateParenGroups("((()))")),
+                () -> assertEquals(List.of("(()(())((())))"), s.separateParenGroups("(()(())((())))")),
+                () -> assertEquals(List.of("()", "()"), s.separateParenGroups("()()")),
+                () -> assertEquals(List.of("()", "()"), s.separateParenGroups("() ()")),
+                () -> assertEquals(
+                        List.of("(()())", "((()))", "()", "((())()())"),
+                        s.separateParenGroups("(()()) ((())) () ((())()())")
+                ),
+                () -> assertEquals(
+                        List.of("()", "(())", "((()))", "(((())))"),
+                        s.separateParenGroups("() (()) ((())) (((())))")
+                ),
+                () -> assertEquals(List.of("()", "(())", "(()())"), s.separateParenGroups("( ) (( )) (( )( ))")),
+                () -> assertThrows(Throwable.class, () -> s.separateParenGroups("(()"))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.intersperse(new ArrayList<>(List.of()), 7).equals(List.of()),
+                s.intersperse(new ArrayList<>(Arrays.asList(5, 6, 3, 2)), 8).equals(Arrays.asList(5, 8, 6, 8, 3, 8, 2)),
+                s.intersperse(new ArrayList<>(Arrays.asList(2, 2, 2)), 2).equals(Arrays.asList(2, 2, 2, 2, 2))
+        assertAll(
+                () -> assertEquals(List.of(), s.intersperse(List.of(), 7)),
+                () -> assertEquals(List.of(9), s.intersperse(List.of(9), 3)),
+                () -> assertEquals(List.of(1, 0, 2), s.intersperse(List.of(1, 2), 0)),
+                () -> assertEquals(List.of(5, 8, 6, 8, 3, 8, 2), s.intersperse(List.of(5, 6, 3, 2), 8)),
+                () -> assertEquals(List.of(2, 2, 2, 2, 2), s.intersperse(List.of(2, 2, 2), 2))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.sumProduct(new ArrayList<>(List.of())).equals(Arrays.asList(0, 1)),
+                s.sumProduct(new ArrayList<>(Arrays.asList(1, 1, 1))).equals(Arrays.asList(3, 1)),
+                s.sumProduct(new ArrayList<>(Arrays.asList(100, 0))).equals(Arrays.asList(100, 0)),
+                s.sumProduct(new ArrayList<>(Arrays.asList(3, 5, 7))).equals(Arrays.asList(3 + 5 + 7, 3 * 5 * 7)),
+                s.sumProduct(new ArrayList<>(List.of(10))).equals(Arrays.asList(10, 10))
+        assertAll(
+                () -> assertEquals(List.of(0, 1), s.sumProduct(List.of())),
+                () -> assertEquals(List.of(10, 10), s.sumProduct(List.of(10))),
+                () -> assertEquals(List.of(3, 1), s.sumProduct(List.of(1, 1, 1))),
+                () -> assertEquals(List.of(100, 0), s.sumProduct(List.of(100, 0))),
+                () -> assertEquals(List.of(15, 105), s.sumProduct(List.of(3, 5, 7))),
+                () -> assertEquals(List.of(-2, 6), s.sumProduct(List.of(-1, 2, -3))),
+                () -> assertEquals(List.of(3000, 2_000_000), s.sumProduct(List.of(1000, 2000)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.greatestCommonDivisor(3, 7) == 1,
+                s.greatestCommonDivisor(10, 15) == 5,
+                s.greatestCommonDivisor(49, 14) == 7,
+                s.greatestCommonDivisor(144, 60) == 12
+        assertAll(
+                () -> assertEquals(1, s.greatestCommonDivisor(3, 7)),
+                () -> assertEquals(5, s.greatestCommonDivisor(10, 15)),
+                () -> assertEquals(7, s.greatestCommonDivisor(49, 14)),
+                () -> assertEquals(12, s.greatestCommonDivisor(144, 60)),
+                () -> assertEquals(6, s.greatestCommonDivisor(6, 6)),
+                () -> assertEquals(8, s.greatestCommonDivisor(8, 24)),
+                () -> assertEquals(8, s.greatestCommonDivisor(24, 8)),
+                () -> assertEquals(9, s.greatestCommonDivisor(0, 9)),
+                () -> assertEquals(9, s.greatestCommonDivisor(9, 0)),
+                () -> assertEquals(6, s.greatestCommonDivisor(-54, 24)),
+                () -> assertEquals(6, s.greatestCommonDivisor(54, -24)),
+                () -> assertEquals(6, s.greatestCommonDivisor(-54, -24)),
+                () -> assertThrows(Throwable.class, () -> s.greatestCommonDivisor(0, 0))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.countDistinctCharacters("") == 0,
+                s.countDistinctCharacters("abcde") == 5,
+                s.countDistinctCharacters("abcde" + "cade" + "CADE") == 5,
+                s.countDistinctCharacters("aaaaAAAAaaaa") == 1,
+                s.countDistinctCharacters("Jerry jERRY JeRRRY") == 5
+        assertAll(
+                () -> assertEquals(0, s.countDistinctCharacters("")),
+                () -> assertEquals(5, s.countDistinctCharacters("abcde")),
+                () -> assertEquals(5, s.countDistinctCharacters("abcdecadeCADE")),
+                () -> assertEquals(1, s.countDistinctCharacters("aaaaAAAAaaaa")),
+                () -> assertEquals(5, s.countDistinctCharacters("Jerry jERRY JeRRRY")),
+                () -> assertEquals(2, s.countDistinctCharacters("Aa")),
+                () -> assertEquals(3, s.countDistinctCharacters("AaB")),
+                () -> assertThrows(Throwable.class, () -> s.countDistinctCharacters(null))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.howManyTimes("", "x") == 0,
+                s.howManyTimes("xyxyxyx", "x") == 4,
+                s.howManyTimes("cacacacac", "cac") == 4,
+                s.howManyTimes("john doe", "john") == 1
+        assertAll(
+                () -> assertEquals(0, s.howManyTimes("", "x")),
+                () -> assertEquals(0, s.howManyTimes("abc", "abcd")),
+                () -> assertEquals(0, s.howManyTimes("abcdef", "gh")),
+                () -> assertEquals(1, s.howManyTimes("john doe", "john")),
+                () -> assertEquals(1, s.howManyTimes("match", "match")),
+                () -> assertEquals(4, s.howManyTimes("xyxyxyx", "x")),
+                () -> assertEquals(4, s.howManyTimes("cacacacac", "cac"))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.findClosestElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 3.9, 4.0, 5.0, 2.2))).equals(Arrays.asList(3.9, 4.0)),
+                s.findClosestElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 5.9, 4.0, 5.0))).equals(Arrays.asList(5.0, 5.9)),
+                s.findClosestElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 2.2))).equals(Arrays.asList(2.0, 2.2)),
+                s.findClosestElements(new ArrayList<>(Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 2.0))).equals(Arrays.asList(2.0, 2.0)),
+                s.findClosestElements(new ArrayList<>(Arrays.asList(1.1, 2.2, 3.1, 4.1, 5.1))).equals(Arrays.asList(2.2, 3.1))
+        assertAll(
+                () -> assertEquals(List.of(1.0, 2.0), s.findClosestElements(List.of(1.0, 2.0))),
+                () -> assertEquals(List.of(1.0, 2.0), s.findClosestElements(List.of(1.0, 2.0, 3.0))),
+                () -> assertEquals(List.of(3.9, 4.0), s.findClosestElements(List.of(1.0, 2.0, 3.9, 4.0, 5.0, 2.2))),
+                () -> assertEquals(List.of(5.0, 5.9), s.findClosestElements(List.of(1.0, 2.0, 5.9, 4.0, 5.0))),
+                () -> assertEquals(List.of(2.0, 2.2), s.findClosestElements(List.of(1.0, 2.0, 3.0, 4.0, 5.0, 2.2))),
+                () -> assertEquals(List.of(2.0, 2.0), s.findClosestElements(List.of(1.0, 2.0, 3.0, 4.0, 5.0, 2.0))),
+                () -> assertEquals(List.of(2.2, 3.1), s.findClosestElements(List.of(1.1, 2.2, 3.1, 4.1, 5.1))),
+                () -> assertThrows(Throwable.class, () -> s.findClosestElements(List.of(1.0)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.factorize(2).equals(List.of(2)),
+                s.factorize(4).equals(Arrays.asList(2, 2)),
+                s.factorize(8).equals(Arrays.asList(2, 2, 2)),
+                s.factorize(3 * 19).equals(Arrays.asList(3, 19)),
+                s.factorize(3 * 19 * 3 * 19).equals(Arrays.asList(3, 3, 19, 19)),
+                s.factorize(3 * 19 * 3 * 19 * 3 * 19).equals(Arrays.asList(3, 3, 3, 19, 19, 19)),
+                s.factorize(3 * 19 * 19 * 19).equals(Arrays.asList(3, 19, 19, 19)),
+                s.factorize(3 * 2 * 3).equals(Arrays.asList(2, 3, 3))
+        assertAll(
+                () -> assertEquals(List.of(), s.factorize(1)),
+                () -> assertEquals(List.of(2), s.factorize(2)),
+                () -> assertEquals(List.of(13), s.factorize(13)),
+                () -> assertEquals(List.of(2, 2), s.factorize(4)),
+                () -> assertEquals(List.of(2, 2, 2), s.factorize(8)),
+                () -> assertEquals(List.of(3, 19), s.factorize(3 * 19)),
+                () -> assertEquals(List.of(3, 3, 19, 19), s.factorize(3 * 19 * 3 * 19)),
+                () -> assertEquals(List.of(3, 3, 3, 19, 19, 19), s.factorize(3 * 19 * 3 * 19 * 3 * 19)),
+                () -> assertEquals(List.of(3, 19, 19, 19), s.factorize(3 * 19 * 19 * 19)),
+                () -> assertEquals(List.of(2, 3, 3), s.factorize(3 * 2 * 3))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.stream.Collectors;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.filterByPrefix(new ArrayList<>(List.of()), "john").equals(List.of()),
+                s.filterByPrefix(new ArrayList<>(Arrays.asList("xxx", "asd", "xxy", "john doe", "xxxAAA", "xxx")), "xxx").equals(Arrays.asList("xxx", "xxxAAA", "xxx"))
+        assertAll(
+                () -> assertEquals(List.of(), s.filterByPrefix(List.of(), "john")),
+                () -> assertEquals(List.of("alpha", "beta"), s.filterByPrefix(List.of("alpha", "beta"), "")),
+                () -> assertEquals(List.of(), s.filterByPrefix(List.of("cat", "dog"), "zzz")),
+                () -> assertEquals(List.of(), s.filterByPrefix(List.of("cat", "dog"), "longer-than-any-entry")),
+                () -> assertEquals(
+                        List.of("xxx", "xxxAAA", "xxx"),
+                        s.filterByPrefix(List.of("xxx", "asd", "xxy", "john doe", "xxxAAA", "xxx"), "xxx")
+                ),
+                () -> assertEquals(List.of("Case"), s.filterByPrefix(List.of("Case", "case", "cases"), "Cas"))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+class MutationDatasetTest {
+        Random rand = new Random(42);
+        for (int i = 0; i < 100; i++) {
+            double solution = s.findZero(coeffs);
+            if (Math.abs(s.poly(coeffs, solution)) > 1e-4) {
+                throw new AssertionError();
+            }
+            assertTrue(Math.abs(s.poly(coeffs, solution)) <= 1e-4);
+        }
+        assertAll(
+                () -> assertPolynomialRoot(s, List.of(-2.0, 1.0)),
+                () -> assertPolynomialRoot(s, List.of(-8.0, 0.0, 0.0, 1.0)),
+                () -> assertThrows(Throwable.class, () -> s.findZero(List.of(1.0, 0.0, 1.0))),
+                () -> assertThrows(Throwable.class, () -> s.findZero(List.of(0.0, 0.0, 0.0)))
+        );
+    }
+    private static void assertPolynomialRoot(Solution s, List<Double> coeffs) {
+        double solution = s.findZero(coeffs);
+        assertTrue(Math.abs(s.poly(coeffs, solution)) <= 1e-4);
+    }
+}
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(1, 3, 5, 0))),
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(1, 3, 5, -1))),
+                s.triplesSumToZero(new ArrayList<>(Arrays.asList(1, 3, -2, 1))),
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(1, 2, 3, 7))),
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(1, 2, 5, 7))),
+                s.triplesSumToZero(new ArrayList<>(Arrays.asList(2, 4, -5, 3, 9, 7))),
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(1))),
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(1, 3, 5, -100))),
+                !s.triplesSumToZero(new ArrayList<>(Arrays.asList(100, 3, 5, -100)))
+        assertAll(
+                () -> assertFalse(s.triplesSumToZero(List.of(1))),
+                () -> assertFalse(s.triplesSumToZero(List.of(1, 2))),
+                () -> assertFalse(s.triplesSumToZero(List.of(1, 3, 5, 0))),
+                () -> assertFalse(s.triplesSumToZero(List.of(1, 3, 5, -1))),
+                () -> assertTrue(s.triplesSumToZero(List.of(1, 3, -2, 1))),
+                () -> assertFalse(s.triplesSumToZero(List.of(1, 2, 3, 7))),
+                () -> assertFalse(s.triplesSumToZero(List.of(1, 2, 5, 7))),
+                () -> assertTrue(s.triplesSumToZero(List.of(2, 4, -5, 3, 9, 7))),
+                () -> assertFalse(s.triplesSumToZero(List.of(-5, -4, -3, -2))),
+                () -> assertFalse(s.triplesSumToZero(List.of(1, 1, 2, -4))),
+                () -> assertTrue(s.triplesSumToZero(List.of(0, 0, 0)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                Objects.equals(s.changeBase(8, 3), "22"),
+                Objects.equals(s.changeBase(9, 3), "100"),
+                Objects.equals(s.changeBase(234, 2), "11101010"),
+                Objects.equals(s.changeBase(16, 2), "10000"),
+                Objects.equals(s.changeBase(8, 2), "1000"),
+                Objects.equals(s.changeBase(7, 2), "111")
+        assertAll(
+                () -> assertEquals("0", s.changeBase(0, 2)),
+                () -> assertEquals("22", s.changeBase(8, 3)),
+                () -> assertEquals("100", s.changeBase(9, 3)),
+                () -> assertEquals("11101010", s.changeBase(234, 2)),
+                () -> assertEquals("10000", s.changeBase(16, 2)),
+                () -> assertEquals("1000", s.changeBase(8, 2)),
+                () -> assertEquals("111", s.changeBase(7, 2)),
+                () -> assertEquals("123", s.changeBase(123, 10)),
+                () -> assertThrows(Throwable.class, () -> s.changeBase(5, 1)),
+                () -> assertThrows(Throwable.class, () -> s.changeBase(5, 11))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+        for (int x = 2; x < 8; x++) {
+            if (!Objects.equals(s.changeBase(x, x + 1), String.valueOf(x))) {
+                throw new AssertionError();
+            }
+            assertEquals(String.valueOf(x), s.changeBase(x, x + 1));
+        }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.fib4(5) == 4,
+                s.fib4(8) == 28,
+                s.fib4(10) == 104,
+                s.fib4(12) == 386
+        assertAll(
+                () -> assertEquals(0, s.fib4(0)),
+                () -> assertEquals(0, s.fib4(1)),
+                () -> assertEquals(2, s.fib4(2)),
+                () -> assertEquals(0, s.fib4(3)),
+                () -> assertEquals(2, s.fib4(4)),
+                () -> assertEquals(4, s.fib4(5)),
+                () -> assertEquals(28, s.fib4(8)),
+                () -> assertEquals(104, s.fib4(10)),
+                () -> assertEquals(386, s.fib4(12)),
+                () -> assertEquals(fib4Expected(15), s.fib4(15)),
+                () -> assertThrows(Throwable.class, () -> s.fib4(-1))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+    }
+    private static int fib4Expected(int n) {
+        if (n == 0 || n == 1) {
+            return 0;
+        }
+        if (n == 2) {
+            return 2;
+        }
+        if (n == 3) {
+            return 0;
+        }
+        if (n == 4) {
+            return 2;
+        }
+        int a = 0;
+        int b = 0;
+        int c = 2;
+        int d = 0;
+        int e = 2;
+        for (int i = 5; i <= n; i++) {
+            int next = a + b + c + d;
+            a = b;
+            b = c;
+            c = d;
+            d = e;
+            e = next;
+        }
+        return e;
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.isPalindrome(""),
+                s.isPalindrome("aba"),
+                s.isPalindrome("aaaaa"),
+                !s.isPalindrome("zbcd"),
+                s.isPalindrome("xywyx"),
+                !s.isPalindrome("xywyz"),
+                !s.isPalindrome("xywzx")
+        assertAll(
+                () -> assertTrue(s.isPalindrome("")),
+                () -> assertTrue(s.isPalindrome("x")),
+                () -> assertTrue(s.isPalindrome("aa")),
+                () -> assertFalse(s.isPalindrome("ab")),
+                () -> assertTrue(s.isPalindrome("aba")),
+                () -> assertTrue(s.isPalindrome("aaaaa")),
+                () -> assertFalse(s.isPalindrome("zbcd")),
+                () -> assertTrue(s.isPalindrome("xywyx")),
+                () -> assertFalse(s.isPalindrome("xywyz")),
+                () -> assertFalse(s.isPalindrome("xywzx")),
+                () -> assertTrue(s.isPalindrome("aBa")),
+                () -> assertFalse(s.isPalindrome("aBc")),
+                () -> assertTrue(s.isPalindrome("a a")),
+                () -> assertFalse(s.isPalindrome("ab a")),
+                () -> assertTrue(s.isPalindrome("abcdefghhgfedcba")),
+                () -> assertFalse(s.isPalindrome("abcdefghhgfedcbz")),
+                () -> assertThrows(Throwable.class, () -> s.isPalindrome(null))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.fib(10) == 55,
+                s.fib(1) == 1,
+                s.fib(8) == 21,
+                s.fib(11) == 89,
+                s.fib(12) == 144
+        assertAll(
+                () -> assertEquals(1, s.fib(1)),
+                () -> assertEquals(1, s.fib(2)),
+                () -> assertEquals(2, s.fib(3)),
+                () -> assertEquals(21, s.fib(8)),
+                () -> assertEquals(55, s.fib(10)),
+                () -> assertEquals(89, s.fib(11)),
+                () -> assertEquals(144, s.fib(12)),
+                () -> assertEquals(6765, s.fib(20)),
+                () -> assertThrows(Throwable.class, () -> s.fib(0)),
+                () -> assertThrows(Throwable.class, () -> s.fib(-1))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.monotonic(new ArrayList<>(Arrays.asList(1, 2, 4, 10))),
+                s.monotonic(new ArrayList<>(Arrays.asList(1, 2, 4, 20))),
+                !s.monotonic(new ArrayList<>(Arrays.asList(1, 20, 4, 10))),
+                s.monotonic(new ArrayList<>(Arrays.asList(4, 1, 0, -10))),
+                s.monotonic(new ArrayList<>(Arrays.asList(4, 1, 1, 0))),
+                !s.monotonic(new ArrayList<>(Arrays.asList(1, 2, 3, 2, 5, 60))),
+                s.monotonic(new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 60))),
+                s.monotonic(new ArrayList<>(Arrays.asList(9, 9, 9, 9)))
+        assertAll(
+                () -> assertTrue(s.monotonic(List.of(7))),
+                () -> assertTrue(s.monotonic(List.of(1, 2))),
+                () -> assertTrue(s.monotonic(List.of(2, 1))),
+                () -> assertTrue(s.monotonic(List.of(1, 2, 3))),
+                () -> assertTrue(s.monotonic(List.of(3, 2, 1))),
+                () -> assertFalse(s.monotonic(List.of(1, 3, 2))),
+                () -> assertTrue(s.monotonic(List.of(1, 2, 4, 10))),
+                () -> assertTrue(s.monotonic(List.of(1, 2, 4, 20))),
+                () -> assertFalse(s.monotonic(List.of(1, 20, 4, 10))),
+                () -> assertTrue(s.monotonic(List.of(4, 1, 0, -10))),
+                () -> assertTrue(s.monotonic(List.of(4, 1, 1, 0))),
+                () -> assertFalse(s.monotonic(List.of(1, 2, 3, 2, 5, 60))),
+                () -> assertTrue(s.monotonic(List.of(1, 2, 3, 4, 5, 60))),
+                () -> assertTrue(s.monotonic(List.of(9, 9, 9, 9)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.common(new ArrayList<>(Arrays.asList(1, 4, 3, 34, 653, 2, 5)), new ArrayList<>(Arrays.asList(5, 7, 1, 5, 9, 653, 121))).equals(Arrays.asList(1, 5, 653)),
+                s.common(new ArrayList<>(Arrays.asList(5, 3, 2, 8)), new ArrayList<>(Arrays.asList(3, 2))).equals(Arrays.asList(2, 3)),
+                s.common(new ArrayList<>(Arrays.asList(4, 3, 2, 8)), new ArrayList<>(Arrays.asList(3, 2, 4))).equals(Arrays.asList(2, 3, 4)),
+                s.common(new ArrayList<>(Arrays.asList(4, 3, 2, 8)), new ArrayList<>(List.of())).equals(List.of())
+        assertAll(
+                () -> assertEquals(List.of(), s.common(List.of(), List.of())),
+                () -> assertEquals(List.of(), s.common(List.of(4, 3, 2, 8), List.of())),
+                () -> assertEquals(List.of(), s.common(List.of(), List.of(1, 2, 3))),
+                () -> assertEquals(List.of(1, 5, 653), s.common(List.of(1, 4, 3, 34, 653, 2, 5), List.of(5, 7, 1, 5, 9, 653, 121))),
+                () -> assertEquals(List.of(2, 3), s.common(List.of(5, 3, 2, 8), List.of(3, 2))),
+                () -> assertEquals(List.of(2, 3, 4), s.common(List.of(4, 3, 2, 8), List.of(3, 2, 4))),
+                () -> assertEquals(List.of(2, 3), s.common(List.of(1, 2, 2, 3, 3), List.of(3, 2, 2, 4))),
+                () -> assertEquals(List.of(5), s.common(List.of(5, 1, 9), List.of(4, 5, 6)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.circularShift(100, 2).equals("001"),
+                s.circularShift(12, 2).equals("12"),
+                s.circularShift(97, 8).equals("79"),
+                s.circularShift(12, 1).equals("21"),
+                s.circularShift(11, 101).equals("11")
+        assertAll(
+                () -> assertEquals("7", s.circularShift(7, 100)),
+                () -> assertEquals("001", s.circularShift(100, 2)),
+                () -> assertEquals("12", s.circularShift(12, 2)),
+                () -> assertEquals("79", s.circularShift(97, 8)),
+                () -> assertEquals("21", s.circularShift(12, 1)),
+                () -> assertEquals("11", s.circularShift(11, 101))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.search(new ArrayList<>(Arrays.asList(5, 5, 5, 5, 1))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(4, 1, 4, 1, 4, 4))) == 4,
+                s.search(new ArrayList<>(Arrays.asList(3, 3))) == -1,
+                s.search(new ArrayList<>(Arrays.asList(8, 8, 8, 8, 8, 8, 8, 8))) == 8,
+                s.search(new ArrayList<>(Arrays.asList(2, 3, 3, 2, 2))) == 2,
+                s.search(new ArrayList<>(Arrays.asList(2, 7, 8, 8, 4, 8, 7, 3, 9, 6, 5, 10, 4, 3, 6, 7, 1, 7, 4, 10, 8, 1))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(3, 2, 8, 2))) == 2,
+                s.search(new ArrayList<>(Arrays.asList(6, 7, 1, 8, 8, 10, 5, 8, 5, 3, 10))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(8, 8, 3, 6, 5, 6, 4))) == -1,
+                s.search(new ArrayList<>(Arrays.asList(6, 9, 6, 7, 1, 4, 7, 1, 8, 8, 9, 8, 10, 10, 8, 4, 10, 4, 10, 1, 2, 9, 5, 7, 9))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(1, 9, 10, 1, 3))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(6, 9, 7, 5, 8, 7, 5, 3, 7, 5, 10, 10, 3, 6, 10, 2, 8, 6, 5, 4, 9, 5, 3, 10))) == 5,
+                s.search(new ArrayList<>(List.of(1))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(8, 8, 10, 6, 4, 3, 5, 8, 2, 4, 2, 8, 4, 6, 10, 4, 2, 1, 10, 2, 1, 1, 5))) == 4,
+                s.search(new ArrayList<>(Arrays.asList(2, 10, 4, 8, 2, 10, 5, 1, 2, 9, 5, 5, 6, 3, 8, 6, 4, 10))) == 2,
+                s.search(new ArrayList<>(Arrays.asList(1, 6, 10, 1, 6, 9, 10, 8, 6, 8, 7, 3))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(9, 2, 4, 1, 5, 1, 5, 2, 5, 7, 7, 7, 3, 10, 1, 5, 4, 2, 8, 4, 1, 9, 10, 7, 10, 2, 8, 10, 9, 4))) == 4,
+                s.search(new ArrayList<>(Arrays.asList(2, 6, 4, 2, 8, 7, 5, 6, 4, 10, 4, 6, 3, 7, 8, 8, 3, 1, 4, 2, 2, 10, 7))) == 4,
+                s.search(new ArrayList<>(Arrays.asList(9, 8, 6, 10, 2, 6, 10, 2, 7, 8, 10, 3, 8, 2, 6, 2, 3, 1))) == 2,
+                s.search(new ArrayList<>(Arrays.asList(5, 5, 3, 9, 5, 6, 3, 2, 8, 5, 6, 10, 10, 6, 8, 4, 10, 7, 7, 10, 8))) == -1,
+                s.search(new ArrayList<>(List.of(10))) == -1,
+                s.search(new ArrayList<>(Arrays.asList(9, 7, 7, 2, 4, 7, 2, 10, 9, 7, 5, 7, 2))) == 2,
+                s.search(new ArrayList<>(Arrays.asList(5, 4, 10, 2, 1, 1, 10, 3, 6, 1, 8))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(7, 9, 9, 9, 3, 4, 1, 5, 9, 1, 2, 1, 1, 10, 7, 5, 6, 7, 6, 7, 7, 6))) == 1,
+                s.search(new ArrayList<>(Arrays.asList(3, 10, 10, 9, 2))) == -1
+        assertAll(
+                () -> assertEquals(-1, s.search(List.of())),
+                () -> assertEquals(-1, s.search(List.of(-5, 0, -1))),
+                () -> assertEquals(1, s.search(List.of(5, 5, 5, 5, 1))),
+                () -> assertEquals(4, s.search(List.of(4, 1, 4, 1, 4, 4))),
+                () -> assertEquals(-1, s.search(List.of(3, 3))),
+                () -> assertEquals(8, s.search(List.of(8, 8, 8, 8, 8, 8, 8, 8))),
+                () -> assertEquals(2, s.search(List.of(2, 3, 3, 2, 2))),
+                () -> assertEquals(1, s.search(List.of(1))),
+                () -> assertEquals(-1, s.search(List.of(10)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.isSimplePower(1, 4),
+                s.isSimplePower(2, 2),
+                s.isSimplePower(8, 2),
+                !s.isSimplePower(3, 2),
+                !s.isSimplePower(3, 1),
+                !s.isSimplePower(5, 3),
+                s.isSimplePower(16, 2),
+                !s.isSimplePower(143214, 16),
+                s.isSimplePower(4, 2),
+                s.isSimplePower(9, 3),
+                s.isSimplePower(16, 4),
+                !s.isSimplePower(24, 2),
+                !s.isSimplePower(128, 4),
+                !s.isSimplePower(12, 6),
+                s.isSimplePower(1, 1),
+                s.isSimplePower(1, 12)
+        assertAll(
+                () -> assertTrue(s.isSimplePower(1, 4)),
+                () -> assertTrue(s.isSimplePower(2, 2)),
+                () -> assertTrue(s.isSimplePower(8, 2)),
+                () -> assertFalse(s.isSimplePower(3, 2)),
+                () -> assertFalse(s.isSimplePower(3, 1)),
+                () -> assertFalse(s.isSimplePower(5, 3)),
+                () -> assertTrue(s.isSimplePower(16, 2)),
+                () -> assertFalse(s.isSimplePower(143214, 16)),
+                () -> assertTrue(s.isSimplePower(4, 2)),
+                () -> assertTrue(s.isSimplePower(9, 3)),
+                () -> assertTrue(s.isSimplePower(16, 4)),
+                () -> assertFalse(s.isSimplePower(24, 2)),
+                () -> assertFalse(s.isSimplePower(128, 4)),
+                () -> assertFalse(s.isSimplePower(12, 6)),
+                () -> assertTrue(s.isSimplePower(1, 1)),
+                () -> assertTrue(s.isSimplePower(1, 12)),
+                () -> assertFalse(s.isSimplePower(-8, 2))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.moveOneBall(new ArrayList<>(Arrays.asList(3, 4, 5, 1, 2))) == true,
+                s.moveOneBall(new ArrayList<>(Arrays.asList(3, 5, 10, 1, 2))) == true,
+                s.moveOneBall(new ArrayList<>(Arrays.asList(4, 3, 1, 2))) == false,
+                s.moveOneBall(new ArrayList<>(Arrays.asList(3, 5, 4, 1, 2))) == false,
+                s.moveOneBall(new ArrayList<>(Arrays.asList())) == true
+        assertAll(
+                () -> assertTrue(s.moveOneBall(List.of())),
+                () -> assertTrue(s.moveOneBall(List.of(5))),
+                () -> assertTrue(s.moveOneBall(List.of(1, 2, 3, 4))),
+                () -> assertTrue(s.moveOneBall(List.of(2, 3, 4, 1))),
+                () -> assertTrue(s.moveOneBall(List.of(3, 4, 5, 1, 2))),
+                () -> assertTrue(s.moveOneBall(List.of(3, 5, 10, 1, 2))),
+                () -> assertFalse(s.moveOneBall(List.of(4, 3, 1, 2))),
+                () -> assertFalse(s.moveOneBall(List.of(3, 5, 4, 1, 2)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                Objects.equals(s.exchange(Arrays.asList(1, 2, 3, 4), Arrays.asList(1, 2, 3, 4)), "YES" ),
+                Objects.equals(s.exchange(Arrays.asList(1, 2, 3, 4), Arrays.asList(1, 5, 3, 4)), "NO" ),
+                Objects.equals(s.exchange(Arrays.asList(1, 2, 3, 4), Arrays.asList(2, 1, 4, 3)), "YES" ),
+                Objects.equals(s.exchange(Arrays.asList(5, 7, 3), Arrays.asList(2, 6, 4)), "YES" ),
+                Objects.equals(s.exchange(Arrays.asList(5, 7, 3), Arrays.asList(2, 6, 3)), "NO" ),
+                Objects.equals(s.exchange(Arrays.asList(3, 2, 6, 1, 8, 9), Arrays.asList(3, 5, 5, 1, 1, 1)), "NO" ),
+                Objects.equals(s.exchange(Arrays.asList(100, 200), Arrays.asList(200, 200)), "YES" )
+        assertAll(
+                () -> assertEquals("YES", s.exchange(List.of(100, 200), List.of(200, 200))),
+                () -> assertEquals("YES", s.exchange(List.of(1, 2, 3, 4), List.of(1, 2, 3, 4))),
+                () -> assertEquals("NO", s.exchange(List.of(1, 2, 3, 4), List.of(1, 5, 3, 4))),
+                () -> assertEquals("YES", s.exchange(List.of(1, 2, 3, 4), List.of(2, 1, 4, 3))),
+                () -> assertEquals("YES", s.exchange(List.of(5, 7, 3), List.of(2, 6, 4))),
+                () -> assertEquals("NO", s.exchange(List.of(5, 7, 3), List.of(2, 6, 3))),
+                () -> assertEquals("NO", s.exchange(List.of(3, 2, 6, 1, 8, 9), List.of(3, 5, 5, 1, 1, 1))),
+                () -> assertEquals("YES", s.exchange(List.of(1, 3, 5), List.of(2, 4, 6, 8)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.validDate("03-11-2000" ) == true,
+                s.validDate("15-01-2012" ) == false,
+                s.validDate("04-0-2040" ) == false,
+                s.validDate("06-04-2020" ) == true,
+                s.validDate("01-01-2007" ) == true,
+                s.validDate("03-32-2011" ) == false,
+                s.validDate("" ) == false,
+                s.validDate("04-31-3000" ) == false,
+                s.validDate("06-06-2005" ) == true,
+                s.validDate("21-31-2000" ) == false,
+                s.validDate("04-12-2003" ) == true,
+                s.validDate("04122003" ) == false,
+                s.validDate("20030412" ) == false,
+                s.validDate("2003-04" ) == false,
+                s.validDate("2003-04-12" ) == false,
+                s.validDate("04-2003" ) == false
+        assertAll(
+                () -> assertTrue(s.validDate("03-11-2000")),
+                () -> assertFalse(s.validDate("15-01-2012")),
+                () -> assertFalse(s.validDate("04-0-2040")),
+                () -> assertTrue(s.validDate("06-04-2020")),
+                () -> assertTrue(s.validDate("01-01-2007")),
+                () -> assertFalse(s.validDate("03-32-2011")),
+                () -> assertFalse(s.validDate("")),
+                () -> assertFalse(s.validDate("04-31-3000")),
+                () -> assertTrue(s.validDate("06-06-2005")),
+                () -> assertFalse(s.validDate("21-31-2000")),
+                () -> assertTrue(s.validDate("04-12-2003")),
+                () -> assertFalse(s.validDate("04122003")),
+                () -> assertFalse(s.validDate("20030412")),
+                () -> assertFalse(s.validDate("2003-04")),
+                () -> assertFalse(s.validDate("2003-04-12")),
+                () -> assertFalse(s.validDate("04-2003")),
+                () -> assertTrue(s.validDate("01-31-2001")),
+                () -> assertTrue(s.validDate("04-30-2001")),
+                () -> assertTrue(s.validDate("02-29-2001")),
+                () -> assertFalse(s.validDate("02-30-2001")),
+                () -> assertFalse(s.validDate("02-31-2001")),
+                () -> assertFalse(s.validDate("00-10-2001"))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.minPath(Arrays.asList(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6), Arrays.asList(7, 8, 9)), 3).equals(Arrays.asList(1, 2, 1)),
+                s.minPath(Arrays.asList(Arrays.asList(5, 9, 3), Arrays.asList(4, 1, 6), Arrays.asList(7, 8, 2)), 1).equals(List.of(1)),
+                s.minPath(Arrays.asList(Arrays.asList(1, 2, 3, 4), Arrays.asList(5, 6, 7, 8), Arrays.asList(9, 10, 11, 12), Arrays.asList(13, 14, 15, 16)), 4).equals(Arrays.asList(1, 2, 1, 2)),
+                s.minPath(Arrays.asList(Arrays.asList(6, 4, 13, 10), Arrays.asList(5, 7, 12, 1), Arrays.asList(3, 16, 11, 15), Arrays.asList(8, 14, 9, 2)), 7).equals(Arrays.asList(1, 10, 1, 10, 1, 10, 1)),
+                s.minPath(Arrays.asList(Arrays.asList(8, 14, 9, 2), Arrays.asList(6, 4, 13, 15), Arrays.asList(5, 7, 1, 12), Arrays.asList(3, 10, 11, 16)), 5).equals(Arrays.asList(1, 7, 1, 7, 1)),
+                s.minPath(Arrays.asList(Arrays.asList(11, 8, 7, 2), Arrays.asList(5, 16, 14, 4), Arrays.asList(9, 3, 15, 6), Arrays.asList(12, 13, 10, 1)), 9).equals(Arrays.asList(1, 6, 1, 6, 1, 6, 1, 6, 1)),
+                s.minPath(Arrays.asList(Arrays.asList(12, 13, 10, 1), Arrays.asList(9, 3, 15, 6), Arrays.asList(5, 16, 14, 4), Arrays.asList(11, 8, 7, 2)), 12).equals(Arrays.asList(1, 6, 1, 6, 1, 6, 1, 6, 1, 6, 1, 6)),
+                s.minPath(Arrays.asList(Arrays.asList(2, 7, 4), Arrays.asList(3, 1, 5), Arrays.asList(6, 8, 9)), 8).equals(Arrays.asList(1, 3, 1, 3, 1, 3, 1, 3)),
+                s.minPath(Arrays.asList(Arrays.asList(6, 1, 5), Arrays.asList(3, 8, 9), Arrays.asList(2, 7, 4)), 8).equals(Arrays.asList(1, 5, 1, 5, 1, 5, 1, 5)),
+                s.minPath(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(3, 4)), 10).equals(Arrays.asList(1, 2, 1, 2, 1, 2, 1, 2, 1, 2)),
+                s.minPath(Arrays.asList(Arrays.asList(1, 3), Arrays.asList(3, 2)), 10).equals(Arrays.asList(1, 3, 1, 3, 1, 3, 1, 3, 1, 3))
+        assertAll(
+                () -> assertEquals(List.of(1), s.minPath(List.of(List.of(5, 9, 3), List.of(4, 1, 6), List.of(7, 8, 2)), 1)),
+                () -> assertEquals(List.of(1, 2), s.minPath(List.of(List.of(1, 2, 3), List.of(4, 5, 6), List.of(7, 8, 9)), 2)),
+                () -> assertEquals(List.of(1, 2, 1), s.minPath(List.of(List.of(1, 2, 3), List.of(4, 5, 6), List.of(7, 8, 9)), 3)),
+                () -> assertEquals(List.of(1, 2, 1, 2), s.minPath(List.of(List.of(1, 2, 3, 4), List.of(5, 6, 7, 8), List.of(9, 10, 11, 12), List.of(13, 14, 15, 16)), 4)),
+                () -> assertEquals(List.of(1, 10, 1, 10, 1, 10, 1), s.minPath(List.of(List.of(6, 4, 13, 10), List.of(5, 7, 12, 1), List.of(3, 16, 11, 15), List.of(8, 14, 9, 2)), 7)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1, 2, 3), List.of(4, 5, 6)), 3)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1)), 1)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1, 2), List.of(3, 4)), 0)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1, 1), List.of(2, 3)), 2))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                Objects.equals(s.fixSpaces("Example" ), "Example" ),
+                Objects.equals(s.fixSpaces("Mudasir Hanif " ), "Mudasir_Hanif_" ),
+                Objects.equals(s.fixSpaces("Yellow Yellow  Dirty  Fellow" ), "Yellow_Yellow__Dirty__Fellow" ),
+                Objects.equals(s.fixSpaces("Exa   mple" ), "Exa-mple" ),
+                Objects.equals(s.fixSpaces("   Exa 1 2 2 mple" ), "-Exa_1_2_2_mple" )
+        assertAll(
+                () -> assertEquals("Example", s.fixSpaces("Example")),
+                () -> assertEquals("One_Two", s.fixSpaces("One Two")),
+                () -> assertEquals("Mudasir_Hanif_", s.fixSpaces("Mudasir Hanif ")),
+                () -> assertEquals("Yellow_Yellow__Dirty__Fellow", s.fixSpaces("Yellow Yellow  Dirty  Fellow")),
+                () -> assertEquals("Exa-mple", s.fixSpaces("Exa   mple")),
+                () -> assertEquals("-Exa_1_2_2_mple", s.fixSpaces("   Exa 1 2 2 mple"))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                Objects.equals(s.filenameCheck("example.txt" ), "Yes" ),
+                Objects.equals(s.filenameCheck("1example.dll" ), "No" ),
+                Objects.equals(s.filenameCheck("s1sdf3.asd" ), "No" ),
+                Objects.equals(s.filenameCheck("K.dll" ), "Yes" ),
+                Objects.equals(s.filenameCheck("MY16FILE3.exe" ), "Yes" ),
+                Objects.equals(s.filenameCheck("His12FILE94.exe" ), "No" ),
+                Objects.equals(s.filenameCheck("_Y.txt" ), "No" ),
+                Objects.equals(s.filenameCheck("?aREYA.exe" ), "No" ),
+                Objects.equals(s.filenameCheck("/this_is_valid.dll" ), "No" ),
+                Objects.equals(s.filenameCheck("this_is_valid.wow" ), "No" ),
+                Objects.equals(s.filenameCheck("this_is_valid.txt" ), "Yes" ),
+                Objects.equals(s.filenameCheck("this_is_valid.txtexe" ), "No" ),
+                Objects.equals(s.filenameCheck("#this2_i4s_5valid.ten" ), "No" ),
+                Objects.equals(s.filenameCheck("@this1_is6_valid.exe" ), "No" ),
+                Objects.equals(s.filenameCheck("this_is_12valid.6exe4.txt" ), "No" ),
+                Objects.equals(s.filenameCheck("all.exe.txt" ), "No" ),
+                Objects.equals(s.filenameCheck("I563_No.exe" ), "Yes" ),
+                Objects.equals(s.filenameCheck("Is3youfault.txt" ), "Yes" ),
+                Objects.equals(s.filenameCheck("no_one#knows.dll" ), "Yes" ),
+                Objects.equals(s.filenameCheck("1I563_Yes3.exe" ), "No" ),
+                Objects.equals(s.filenameCheck("I563_Yes3.txtt" ), "No" ),
+                Objects.equals(s.filenameCheck("final..txt" ), "No" ),
+                Objects.equals(s.filenameCheck("final132" ), "No" ),
+                Objects.equals(s.filenameCheck("_f4indsartal132." ), "No" )
+        assertAll(
+                () -> assertEquals("Yes", s.filenameCheck("example.txt")),
+                () -> assertEquals("No", s.filenameCheck(".txt")),
+                () -> assertEquals("No", s.filenameCheck("name.EXE")),
+                () -> assertEquals("No", s.filenameCheck("1example.dll")),
+                () -> assertEquals("No", s.filenameCheck("s1sdf3.asd")),
+                () -> assertEquals("Yes", s.filenameCheck("K.dll")),
+                () -> assertEquals("Yes", s.filenameCheck("MY16FILE3.exe")),
+                () -> assertEquals("No", s.filenameCheck("His12FILE94.exe")),
+                () -> assertEquals("No", s.filenameCheck("_Y.txt")),
+                () -> assertEquals("No", s.filenameCheck("?aREYA.exe")),
+                () -> assertEquals("No", s.filenameCheck("/this_is_valid.dll")),
+                () -> assertEquals("No", s.filenameCheck("this_is_valid.wow")),
+                () -> assertEquals("Yes", s.filenameCheck("this_is_valid.txt")),
+                () -> assertEquals("No", s.filenameCheck("this_is_valid.txtexe")),
+                () -> assertEquals("No", s.filenameCheck("#this2_i4s_5valid.ten")),
+                () -> assertEquals("No", s.filenameCheck("@this1_is6_valid.exe")),
+                () -> assertEquals("No", s.filenameCheck("this_is_12valid.6exe4.txt")),
+                () -> assertEquals("No", s.filenameCheck("all.exe.txt")),
+                () -> assertEquals("Yes", s.filenameCheck("I563_No.exe")),
+                () -> assertEquals("Yes", s.filenameCheck("Is3youfault.txt")),
+                () -> assertEquals("Yes", s.filenameCheck("no_one#knows.dll")),
+                () -> assertEquals("No", s.filenameCheck("1I563_Yes3.exe")),
+                () -> assertEquals("No", s.filenameCheck("I563_Yes3.txtt")),
+                () -> assertEquals("No", s.filenameCheck("final..txt")),
+                () -> assertEquals("No", s.filenameCheck("final132")),
+                () -> assertEquals("No", s.filenameCheck("_f4indsartal132."))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                Objects.equals(s.intToMiniRoman(19), "xix"),
+                Objects.equals(s.intToMiniRoman(152), "clii"),
+                Objects.equals(s.intToMiniRoman(251), "ccli"),
+                Objects.equals(s.intToMiniRoman(426), "cdxxvi"),
+                Objects.equals(s.intToMiniRoman(500), "d"),
+                Objects.equals(s.intToMiniRoman(1), "i"),
+                Objects.equals(s.intToMiniRoman(4), "iv"),
+                Objects.equals(s.intToMiniRoman(43), "xliii"),
+                Objects.equals(s.intToMiniRoman(90), "xc"),
+                Objects.equals(s.intToMiniRoman(94), "xciv"),
+                Objects.equals(s.intToMiniRoman(532), "dxxxii"),
+                Objects.equals(s.intToMiniRoman(900), "cm"),
+                Objects.equals(s.intToMiniRoman(994), "cmxciv"),
+                Objects.equals(s.intToMiniRoman(1000), "m")
+        assertAll(
+                () -> assertEquals("i", s.intToMiniRoman(1)),
+                () -> assertEquals("iv", s.intToMiniRoman(4)),
+                () -> assertEquals("ix", s.intToMiniRoman(9)),
+                () -> assertEquals("xix", s.intToMiniRoman(19)),
+                () -> assertEquals("xliii", s.intToMiniRoman(43)),
+                () -> assertEquals("lviii", s.intToMiniRoman(58)),
+                () -> assertEquals("xc", s.intToMiniRoman(90)),
+                () -> assertEquals("xciv", s.intToMiniRoman(94)),
+                () -> assertEquals("clii", s.intToMiniRoman(152)),
+                () -> assertEquals("ccli", s.intToMiniRoman(251)),
+                () -> assertEquals("cdxxvi", s.intToMiniRoman(426)),
+                () -> assertEquals("d", s.intToMiniRoman(500)),
+                () -> assertEquals("dxxxii", s.intToMiniRoman(532)),
+                () -> assertEquals("cm", s.intToMiniRoman(900)),
+                () -> assertEquals("cmxciv", s.intToMiniRoman(994)),
+                () -> assertEquals("m", s.intToMiniRoman(1000)),
+                () -> assertThrows(Throwable.class, () -> s.intToMiniRoman(0)),
+                () -> assertThrows(Throwable.class, () -> s.intToMiniRoman(1001))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.util.*;
+import java.lang.*;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.doAlgebra(new ArrayList<>(Arrays.asList("**", "*", "+")), new ArrayList<>(Arrays.asList(2, 3, 4, 5))) == 37,
+                s.doAlgebra(new ArrayList<>(Arrays.asList("+", "*", "-")), new ArrayList<>(Arrays.asList(2, 3, 4, 5))) == 9,
+                s.doAlgebra(new ArrayList<>(Arrays.asList("/", "*")), new ArrayList<>(Arrays.asList(7, 3, 4))) == 8,
+                s.doAlgebra(new ArrayList<>(Arrays.asList("+", "**", "**")), new ArrayList<>(Arrays.asList(7, 5, 3, 2))) == 1953132
+        assertAll(
+                () -> assertEquals(10, s.doAlgebra(List.of("+", "+", "+"), List.of(1, 2, 3, 4))),
+                () -> assertEquals(5, s.doAlgebra(List.of("-", "-"), List.of(10, 3, 2))),
+                () -> assertEquals(24, s.doAlgebra(List.of("*", "*"), List.of(2, 3, 4))),
+                () -> assertEquals(8, s.doAlgebra(List.of("/", "*"), List.of(7, 3, 4))),
+                () -> assertEquals(8, s.doAlgebra(List.of("/", "/"), List.of(64, 4, 2))),
+                () -> assertEquals(64, s.doAlgebra(List.of("**", "**"), List.of(2, 3, 2))),
+                () -> assertEquals(13, s.doAlgebra(List.of("+", "-", "+"), List.of(10, 2, 3, 4))),
+                () -> assertEquals(6, s.doAlgebra(List.of("/", "+", "-"), List.of(20, 5, 3, 1))),
+                () -> assertEquals(37, s.doAlgebra(List.of("**", "*", "+"), List.of(2, 3, 4, 5))),
+                () -> assertEquals(9, s.doAlgebra(List.of("+", "*", "-"), List.of(2, 3, 4, 5))),
+                () -> assertEquals(1953132, s.doAlgebra(List.of("+", "**", "**"), List.of(7, 5, 3, 2))),
+                () -> assertEquals(35, s.doAlgebra(List.of("*"), List.of(7, 5))),
+                () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of(), List.of(1))),
+                () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of("+"), List.of())),
+                () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of("+", "-"), List.of(1, 2)))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+        }
+    }
+import java.math.BigInteger;
+import java.security.*;
+import java.util.*;
+import java.lang.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+class MutationDatasetTest {
+        Solution s = new Solution();
+        List<Boolean> correct = Arrays.asList(
+                s.stringToMd5("Hello world").get().equals("3e25960a79dbc69b674cd4ec67a72c62"),
+                s.stringToMd5("").isEmpty(),
+                s.stringToMd5("A B C").get().equals("0ef78513b0cb8cef12743f5aeb35f888"),
+                s.stringToMd5("password").get().equals("5f4dcc3b5aa765d61d8327deb882cf99")
+        assertAll(
+                () -> assertEquals(md5("Hello world"), s.stringToMd5("Hello world").orElseThrow()),
+                () -> assertTrue(s.stringToMd5("").isEmpty()),
+                () -> assertEquals(md5("A B C"), s.stringToMd5("A B C").orElseThrow()),
+                () -> assertEquals(md5("password"), s.stringToMd5("password").orElseThrow()),
+                () -> assertEquals(md5("  padded  "), s.stringToMd5("  padded  ").orElseThrow()),
+                () -> assertEquals(md5("istanbul"), s.stringToMd5("istanbul").orElseThrow()),
+                () -> assertEquals(md5("x".repeat(256)), s.stringToMd5("x".repeat(256)).orElseThrow()),
+                () -> assertNotEquals(
+                        s.stringToMd5("CaseSensitive").orElseThrow(),
+                        s.stringToMd5("casesensitive").orElseThrow()
+                ),
+                () -> assertThrows(Throwable.class, () -> s.stringToMd5(null))
+        );
+        if (correct.contains(false)) {
+            throw new AssertionError();
+    }
+    private static String md5(String value) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] digest = md.digest(value.getBytes());
+        StringBuilder builder = new StringBuilder();
+        for (byte b : digest) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
+I’ve finished the first pass of all 30 gpt54 mutation test files. Before I run Maven, I’m tightening a few helper assertions to avoid false negatives from the test code itself rather than the implementations.
+
+                () -> assertEquals(5, s.countDistinctCharacters("Jerry jERRY JeRRRY")),
+                () -> assertEquals(2, s.countDistinctCharacters("Aa")),
+                () -> assertEquals(3, s.countDistinctCharacters("AaB")),
+                () -> assertEquals(1, s.countDistinctCharacters("Aa")),
+                () -> assertEquals(2, s.countDistinctCharacters("AaB")),
+                () -> assertThrows(Throwable.class, () -> s.countDistinctCharacters(null))
+    private static int fib4Expected(int n) {
+        if (n == 0 || n == 1) {
+            return 0;
+        int[] values = {0, 0, 2, 0, 2};
+        if (n < values.length) {
+            return values[n];
+        }
+        if (n == 2) {
+            return 2;
+        }
+        if (n == 3) {
+            return 0;
+        }
+        if (n == 4) {
+            return 2;
+        }
+        int a = 0;
+        int b = 0;
+        int c = 2;
+        int d = 0;
+        int e = 2;
+        int[] dp = new int[n + 1];
+        System.arraycopy(values, 0, dp, 0, values.length);
+        for (int i = 5; i <= n; i++) {
+            int next = a + b + c + d;
+            a = b;
+            b = c;
+            c = d;
+            d = e;
+            e = next;
+            dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3] + dp[i - 4];
+        }
+        return e;
+        return dp[n];
+    }
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+                () -> assertEquals(md5("  padded  "), s.stringToMd5("  padded  ").orElseThrow()),
+                () -> assertEquals(md5("istanbul"), s.stringToMd5("istanbul").orElseThrow()),
+                () -> assertEquals(md5("Istanbul"), s.stringToMd5("Istanbul").orElseThrow()),
+                () -> assertEquals(md5("çilek"), s.stringToMd5("çilek").orElseThrow()),
+                () -> assertEquals(md5("x".repeat(256)), s.stringToMd5("x".repeat(256)).orElseThrow()),
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] digest = md.digest(value.getBytes());
+        byte[] digest = md.digest(value.getBytes(StandardCharsets.UTF_8));
+        StringBuilder builder = new StringBuilder();
+Maven isn’t installed in this environment, so I can’t execute the test suite here. I’m using the IDE diagnostics instead to catch compile/lint issues from the edited test files, then I’ll fix any test-side problems I introduced.
+
+Updated all 30 MutationDatasetTest files under src/test/java/gpt54 and left implementation, data/, and sonnet files untouched.
+
+What changed
+I mutated the generated base tests from coarse “list of booleans” smoke checks into targeted JUnit assertions that reflect the uncovered equivalence classes in data/ecs.xlsx. The changes fall into four main buckets:
+
+Added missing boundary partitions: empty inputs, singleton/min-size inputs, exact-threshold edges, base/range limits, and first valid values. Examples include task0, task1, task20, task44, task46, task48, task55, task57, task69, task109, and task129.
+Added uncovered valid subclasses: adjacent vs separated groups, tied closest pairs, sorted vs duplicate commons, case-sensitive prefix matches, mixed whitespace/case palindromes, and operator-family combinations. Examples include task1, task29, task58, task140, task141, and task160.
+Added invalid-input/invalid-shape checks where Java tests can express them meaningfully: malformed strings, bad bases, nonpositive sizes, non-square grids, repeated grid values, mismatched operator/operand counts, negative numeric domains, and null for string-based APIs. Examples include task32, task44, task46, task55, task129, task156, task160, and task162.
+Added stronger oracles where expected output is derived rather than hardcoded from one example, like the fib4 recurrence helper and MD5 helper.
+Representative examples:
+
+
+MutationDatasetTest.java
+Lines 15-30
+        assertAll(
+                () -> assertEquals("0", s.changeBase(0, 2)),
+                () -> assertEquals("22", s.changeBase(8, 3)),
+                () -> assertEquals("100", s.changeBase(9, 3)),
+                () -> assertEquals("11101010", s.changeBase(234, 2)),
+                () -> assertEquals("10000", s.changeBase(16, 2)),
+                () -> assertEquals("1000", s.changeBase(8, 2)),
+                () -> assertEquals("111", s.changeBase(7, 2)),
+                () -> assertEquals("123", s.changeBase(123, 10)),
+                () -> assertThrows(Throwable.class, () -> s.changeBase(5, 1)),
+                () -> assertThrows(Throwable.class, () -> s.changeBase(5, 11))
+        );
+
+MutationDatasetTest.java
+Lines 17-27
+        assertAll(
+                () -> assertEquals(List.of(1), s.minPath(List.of(List.of(5, 9, 3), List.of(4, 1, 6), List.of(7, 8, 2)), 1)),
+                () -> assertEquals(List.of(1, 2), s.minPath(List.of(List.of(1, 2, 3), List.of(4, 5, 6), List.of(7, 8, 9)), 2)),
+                () -> assertEquals(List.of(1, 2, 1), s.minPath(List.of(List.of(1, 2, 3), List.of(4, 5, 6), List.of(7, 8, 9)), 3)),
+                () -> assertEquals(List.of(1, 2, 1, 2), s.minPath(List.of(List.of(1, 2, 3, 4), List.of(5, 6, 7, 8), List.of(9, 10, 11, 12), List.of(13, 14, 15, 16)), 4)),
+                () -> assertEquals(List.of(1, 10, 1, 10, 1, 10, 1), s.minPath(List.of(List.of(6, 4, 13, 10), List.of(5, 7, 12, 1), List.of(3, 16, 11, 15), List.of(8, 14, 9, 2)), 7)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1, 2, 3), List.of(4, 5, 6)), 3)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1)), 1)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1, 2), List.of(3, 4)), 0)),
+                () -> assertThrows(Throwable.class, () -> s.minPath(List.of(List.of(1, 1), List.of(2, 3)), 2))
+        );
+
+MutationDatasetTest.java
+Lines 17-32
+        assertAll(
+                () -> assertEquals(10, s.doAlgebra(List.of("+", "+", "+"), List.of(1, 2, 3, 4))),
+                () -> assertEquals(5, s.doAlgebra(List.of("-", "-"), List.of(10, 3, 2))),
+                () -> assertEquals(24, s.doAlgebra(List.of("*", "*"), List.of(2, 3, 4))),
+                () -> assertEquals(8, s.doAlgebra(List.of("/", "*"), List.of(7, 3, 4))),
+                () -> assertEquals(8, s.doAlgebra(List.of("/", "/"), List.of(64, 4, 2))),
+                () -> assertEquals(64, s.doAlgebra(List.of("**", "**"), List.of(2, 3, 2))),
+                () -> assertEquals(13, s.doAlgebra(List.of("+", "-", "+"), List.of(10, 2, 3, 4))),
+                () -> assertEquals(6, s.doAlgebra(List.of("/", "+", "-"), List.of(20, 5, 3, 1))),
+                () -> assertEquals(37, s.doAlgebra(List.of("**", "*", "+"), List.of(2, 3, 4, 5))),
+                () -> assertEquals(9, s.doAlgebra(List.of("+", "*", "-"), List.of(2, 3, 4, 5))),
+                () -> assertEquals(1953132, s.doAlgebra(List.of("+", "**", "**"), List.of(7, 5, 3, 2))),
+                () -> assertEquals(35, s.doAlgebra(List.of("*"), List.of(7, 5))),
+                () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of(), List.of(1))),
+                () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of("+"), List.of())),
+                () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of("+", "-"), List.of(1, 2)))
+        );
+Why these mutations improve effectiveness
+These mutations improve the tests because they now exercise the places where faulty implementations usually survive base examples:
+
+Boundary sensitivity: off-by-one mistakes and “happy path only” logic are much more likely to be caught now. task44, task46, task48, task55, and task124 are especially stronger here.
+Validation behavior: many files now check that invalid domains fail instead of silently producing a value. That makes it harder for permissive but wrong implementations to pass.
+Behavioral distinctions inside the same valid domain: the new cases separate tied vs unique matches, adjacent vs separated groups, duplicates vs no duplicates, sorted vs unsorted intersections, and precedence/tie-breaking rules. Those are exactly the mutations that reveal wrong branch logic without needing to inspect the production code.
+Better failure localization: replacing aggregated boolean lists with direct assertions means a failure points to a specific partition, not just “some case in this file failed.”
+One constraint I respected: for workbook rows like “non-int” or “non-string” on APIs whose Java signatures already enforce the type statically, I did not add reflection-based tests. Instead I covered the closest meaningful invalid runtime partitions, such as null, malformed structure, illegal numeric ranges, or mismatched collection shapes.
+
+Verification
+ReadLints reports no diagnostics in src/test/java/gpt54.
+
+I could not run the Maven test suite here because mvn is not installed in this environment, so runtime verification is still pending. If you want, I can next add a local Maven wrapper or give you the exact command to run these gpt54 mutation tests on your machine.
