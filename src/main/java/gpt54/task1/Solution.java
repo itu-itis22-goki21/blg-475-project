@@ -18,6 +18,10 @@ class Solution {
     ["()", "(())", "(()())"]
      */
     public List<String> separateParenGroups(String paren_string) {
+        if (paren_string == null) {
+            throw new IllegalArgumentException("paren_string must not be null");
+        }
+
         List<String> result = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         int balance = 0;
@@ -27,18 +31,28 @@ class Solution {
             if (ch == ' ') {
                 continue;
             }
+            if (ch != '(' && ch != ')') {
+                throw new IllegalArgumentException("Input must contain only parentheses and spaces");
+            }
 
             current.append(ch);
             if (ch == '(') {
                 balance++;
-            } else if (ch == ')') {
+            } else {
                 balance--;
+                if (balance < 0) {
+                    throw new IllegalArgumentException("Unbalanced parentheses");
+                }
             }
 
             if (balance == 0 && current.length() > 0) {
                 result.add(current.toString());
                 current.setLength(0);
             }
+        }
+
+        if (balance != 0) {
+            throw new IllegalArgumentException("Unbalanced parentheses");
         }
 
         return result;

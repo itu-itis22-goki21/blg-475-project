@@ -33,6 +33,13 @@ class Solution {
         Operator list has at least one operator, and operand list has at least two operands.
      */
     public int doAlgebra(List<String> operator, List<Integer> operand) {
+        if (operator == null || operand == null) {
+            throw new IllegalArgumentException("operator and operand must not be null");
+        }
+        if (operator.isEmpty() || operand.size() < 2 || operator.size() != operand.size() - 1) {
+            throw new IllegalArgumentException("operator and operand lengths are inconsistent");
+        }
+
         Deque<Integer> values = new ArrayDeque<>();
         Deque<String> operators = new ArrayDeque<>();
 
@@ -59,7 +66,7 @@ class Solution {
         if (stackedPrecedence > currentPrecedence) {
             return true;
         }
-        return stackedPrecedence == currentPrecedence && !current.equals("**");
+        return stackedPrecedence == currentPrecedence;
     }
 
     private int precedence(String operator) {

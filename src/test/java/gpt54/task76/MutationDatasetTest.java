@@ -29,7 +29,9 @@ class MutationDatasetTest {
                 () -> assertFalse(s.isSimplePower(12, 6)),
                 () -> assertTrue(s.isSimplePower(1, 1)),
                 () -> assertTrue(s.isSimplePower(1, 12)),
-                () -> assertFalse(s.isSimplePower(-8, 2))
+                () -> assertFalse(s.isSimplePower(-8, 2)),
+                () -> assertFalse(s.isSimplePower(8, -2)),
+                () -> assertFalse(s.isSimplePower(-8, -2))
         );
     }
 }

@@ -2,8 +2,11 @@ package gpt54.task141;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -37,7 +40,14 @@ class MutationDatasetTest {
                 () -> assertEquals("No", s.filenameCheck("I563_Yes3.txtt")),
                 () -> assertEquals("No", s.filenameCheck("final..txt")),
                 () -> assertEquals("No", s.filenameCheck("final132")),
-                () -> assertEquals("No", s.filenameCheck("_f4indsartal132."))
+                () -> assertEquals("No", s.filenameCheck("_f4indsartal132.")),
+                () -> assertEquals("No", s.filenameCheck(null)),
+                () -> invokeWithBadArgument(s)
         );
+    }
+
+    private static void invokeWithBadArgument(Solution s) throws Exception {
+        Method method = Solution.class.getDeclaredMethod("filenameCheck", String.class);
+        assertThrows(IllegalArgumentException.class, () -> method.invoke(s, 10));
     }
 }

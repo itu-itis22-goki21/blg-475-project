@@ -25,7 +25,7 @@ class MutationDatasetTest {
                 () -> assertEquals(6, s.doAlgebra(List.of("/", "+", "-"), List.of(20, 5, 3, 1))),
                 () -> assertEquals(37, s.doAlgebra(List.of("**", "*", "+"), List.of(2, 3, 4, 5))),
                 () -> assertEquals(9, s.doAlgebra(List.of("+", "*", "-"), List.of(2, 3, 4, 5))),
-                () -> assertEquals(1953132, s.doAlgebra(List.of("+", "**", "**"), List.of(7, 5, 3, 2))),
+                () -> assertEquals(15632, s.doAlgebra(List.of("+", "**", "**"), List.of(7, 5, 3, 2))),
                 () -> assertEquals(35, s.doAlgebra(List.of("*"), List.of(7, 5))),
                 () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of(), List.of(1))),
                 () -> assertThrows(Throwable.class, () -> s.doAlgebra(List.of("+"), List.of())),

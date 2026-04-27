@@ -6,6 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MutationDatasetTest {
@@ -15,6 +16,7 @@ class MutationDatasetTest {
         Solution s = new Solution();
 
         assertAll(
+                () -> assertTrue(s.monotonic(List.of())),
                 () -> assertTrue(s.monotonic(List.of(7))),
                 () -> assertTrue(s.monotonic(List.of(1, 2))),
                 () -> assertTrue(s.monotonic(List.of(2, 1))),
@@ -28,7 +30,8 @@ class MutationDatasetTest {
                 () -> assertTrue(s.monotonic(List.of(4, 1, 1, 0))),
                 () -> assertFalse(s.monotonic(List.of(1, 2, 3, 2, 5, 60))),
                 () -> assertTrue(s.monotonic(List.of(1, 2, 3, 4, 5, 60))),
-                () -> assertTrue(s.monotonic(List.of(9, 9, 9, 9)))
+                () -> assertTrue(s.monotonic(List.of(9, 9, 9, 9))),
+                () -> assertThrows(ClassCastException.class, () -> s.monotonic((List) List.of(1, "x", 3)))
         );
     }
 }

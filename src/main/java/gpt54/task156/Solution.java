@@ -20,6 +20,10 @@ class Solution {
     >>> intToMiniRoman(426) == "cdxxvi"
      */
     public String intToMiniRoman(int number) {
+        if (number < 1 || number > 1000) {
+            throw new IllegalArgumentException("number must be between 1 and 1000");
+        }
+
         int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
         String[] numerals = {"m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"};
 

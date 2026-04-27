@@ -2,8 +2,11 @@ package gpt54.task65;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -13,11 +16,18 @@ class MutationDatasetTest {
 
         assertAll(
                 () -> assertEquals("7", s.circularShift(7, 100)),
+                () -> assertEquals("1234", s.circularShift(1234, 0)),
                 () -> assertEquals("001", s.circularShift(100, 2)),
                 () -> assertEquals("12", s.circularShift(12, 2)),
                 () -> assertEquals("79", s.circularShift(97, 8)),
                 () -> assertEquals("21", s.circularShift(12, 1)),
-                () -> assertEquals("11", s.circularShift(11, 101))
+                () -> assertEquals("11", s.circularShift(11, 101)),
+                () -> invokeWithBadShift(s)
         );
+    }
+
+    private static void invokeWithBadShift(Solution s) throws Exception {
+        Method method = Solution.class.getDeclaredMethod("circularShift", int.class, int.class);
+        assertThrows(IllegalArgumentException.class, () -> method.invoke(s, 12, "bad"));
     }
 }

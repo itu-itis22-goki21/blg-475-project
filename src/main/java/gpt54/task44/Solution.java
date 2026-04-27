@@ -21,6 +21,12 @@ class Solution {
     "111"
      */
     public String changeBase(int x, int base) {
+        if (base <= 1 || base > 10) {
+            throw new IllegalArgumentException("base must be between 2 and 10");
+        }
+        if (x < 0) {
+            throw new IllegalArgumentException("x must be non-negative");
+        }
         if (x == 0) {
             return "0";
         }

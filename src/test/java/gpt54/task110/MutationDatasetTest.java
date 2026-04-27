@@ -6,6 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -21,7 +22,9 @@ class MutationDatasetTest {
                 () -> assertEquals("YES", s.exchange(List.of(5, 7, 3), List.of(2, 6, 4))),
                 () -> assertEquals("NO", s.exchange(List.of(5, 7, 3), List.of(2, 6, 3))),
                 () -> assertEquals("NO", s.exchange(List.of(3, 2, 6, 1, 8, 9), List.of(3, 5, 5, 1, 1, 1))),
-                () -> assertEquals("YES", s.exchange(List.of(1, 3, 5), List.of(2, 4, 6, 8)))
+                () -> assertEquals("YES", s.exchange(List.of(1, 3, 5), List.of(2, 4, 6, 8))),
+                () -> assertThrows(Throwable.class, () -> s.exchange((List) List.of(1, "x"), List.of(2, 4))),
+                () -> assertThrows(Throwable.class, () -> s.exchange(List.of(1, 3), (List) List.of(2, "x")))
         );
     }
 }

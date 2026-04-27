@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -34,7 +35,9 @@ class MutationDatasetTest {
                 () -> assertTrue(s.validDate("02-29-2001")),
                 () -> assertFalse(s.validDate("02-30-2001")),
                 () -> assertFalse(s.validDate("02-31-2001")),
-                () -> assertFalse(s.validDate("00-10-2001"))
+                () -> assertFalse(s.validDate("00-10-2001")),
+                () -> assertFalse(s.validDate(null)),
+                () -> assertThrows(Throwable.class, () -> Solution.class.getDeclaredMethod("validDate", String.class).invoke(s, 12345))
         );
     }
 }

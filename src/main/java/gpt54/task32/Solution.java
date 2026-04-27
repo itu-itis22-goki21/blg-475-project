@@ -34,12 +34,31 @@ class Solution {
     1.0
      */
     public double findZero(List<Double> xs) {
+        if (xs == null || xs.isEmpty()) {
+            throw new IllegalArgumentException("At least one coefficient is required");
+        }
+
+        boolean allZero = true;
+        for (double coefficient : xs) {
+            if (coefficient != 0.0) {
+                allZero = false;
+                break;
+            }
+        }
+        if (allZero) {
+            throw new IllegalArgumentException("Zero polynomial has no unique root");
+        }
+
         double left = -1.0;
         double right = 1.0;
         double leftValue = poly(xs, left);
         double rightValue = poly(xs, right);
 
+        int expansions = 0;
         while (leftValue * rightValue > 0) {
+            if (++expansions > 256 || Double.isInfinite(left) || Double.isInfinite(right)) {
+                throw new IllegalArgumentException("No real root found");
+            }
             left *= 2.0;
             right *= 2.0;
             leftValue = poly(xs, left);

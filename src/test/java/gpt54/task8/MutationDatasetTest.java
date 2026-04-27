@@ -6,6 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -20,7 +21,8 @@ class MutationDatasetTest {
                 () -> assertEquals(List.of(100, 0), s.sumProduct(List.of(100, 0))),
                 () -> assertEquals(List.of(15, 105), s.sumProduct(List.of(3, 5, 7))),
                 () -> assertEquals(List.of(-2, 6), s.sumProduct(List.of(-1, 2, -3))),
-                () -> assertEquals(List.of(3000, 2_000_000), s.sumProduct(List.of(1000, 2000)))
+                () -> assertEquals(List.of(3000, 2_000_000), s.sumProduct(List.of(1000, 2000))),
+                () -> assertThrows(Throwable.class, () -> s.sumProduct((List) List.of(1, "x")))
         );
     }
 }

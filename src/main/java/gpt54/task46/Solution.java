@@ -25,6 +25,9 @@ class Solution {
     14
      */
     public int fib4(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("n must be non-negative");
+        }
         if (n == 0 || n == 1 || n == 3) {
             return 0;
         }

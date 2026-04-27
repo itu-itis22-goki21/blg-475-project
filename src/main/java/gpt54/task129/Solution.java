@@ -39,6 +39,8 @@ class Solution {
         Output: [1]
      */
     public List<Integer> minPath(List<List<Integer>> grid, int k) {
+        validateGrid(grid, k);
+
         int n = grid.size();
         int row = 0;
         int col = 0;
@@ -82,6 +84,34 @@ class Solution {
         }
 
         return path;
+    }
+
+    private void validateGrid(List<List<Integer>> grid, int k) {
+        if (grid == null || grid.size() < 2) {
+            throw new IllegalArgumentException("grid must be at least 2x2");
+        }
+        if (k <= 0) {
+            throw new IllegalArgumentException("k must be positive");
+        }
+
+        int n = grid.size();
+        Set<Integer> seen = new HashSet<>();
+        for (List<Integer> row : grid) {
+            if (row == null || row.size() != n) {
+                throw new IllegalArgumentException("grid must be square");
+            }
+            for (Integer value : row) {
+                if (value == null || !seen.add(value)) {
+                    throw new IllegalArgumentException("grid values must be unique and non-null");
+                }
+            }
+        }
+
+        for (int expected = 1; expected <= n * n; expected++) {
+            if (!seen.contains(expected)) {
+                throw new IllegalArgumentException("grid must contain every value from 1 to N^2");
+            }
+        }
     }
 }
 

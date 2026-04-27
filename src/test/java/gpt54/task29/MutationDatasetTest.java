@@ -2,10 +2,12 @@ package gpt54.task29;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -22,7 +24,14 @@ class MutationDatasetTest {
                         List.of("xxx", "xxxAAA", "xxx"),
                         s.filterByPrefix(List.of("xxx", "asd", "xxy", "john doe", "xxxAAA", "xxx"), "xxx")
                 ),
-                () -> assertEquals(List.of("Case"), s.filterByPrefix(List.of("Case", "case", "cases"), "Cas"))
+                () -> assertEquals(List.of("Case"), s.filterByPrefix(List.of("Case", "case", "cases"), "Cas")),
+                () -> assertThrows(ClassCastException.class, () -> s.filterByPrefix((List) List.of("ok", 1), "o")),
+                () -> invokeWithBadPrefix(s)
         );
+    }
+
+    private static void invokeWithBadPrefix(Solution s) throws Exception {
+        Method method = Solution.class.getDeclaredMethod("filterByPrefix", List.class, String.class);
+        assertThrows(IllegalArgumentException.class, () -> method.invoke(s, List.of("abc"), 123));
     }
 }

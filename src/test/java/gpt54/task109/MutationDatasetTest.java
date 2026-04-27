@@ -7,6 +7,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MutationDatasetTest {
 
@@ -22,7 +23,8 @@ class MutationDatasetTest {
                 () -> assertTrue(s.moveOneBall(List.of(3, 4, 5, 1, 2))),
                 () -> assertTrue(s.moveOneBall(List.of(3, 5, 10, 1, 2))),
                 () -> assertFalse(s.moveOneBall(List.of(4, 3, 1, 2))),
-                () -> assertFalse(s.moveOneBall(List.of(3, 5, 4, 1, 2)))
+                () -> assertFalse(s.moveOneBall(List.of(3, 5, 4, 1, 2))),
+                () -> assertThrows(Throwable.class, () -> s.moveOneBall((List) List.of(1, "x", 2)))
         );
     }
 }
