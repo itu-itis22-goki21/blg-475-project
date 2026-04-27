@@ -32,5 +32,7 @@ public class SolutionTest {
         assertEquals(-1, s.search(new ArrayList<>(Arrays.asList(5, 5, 4, 4, 4))));
         // Docstring example
         assertEquals(2, s.search(new ArrayList<>(Arrays.asList(4, 1, 2, 2, 3, 1))));
+        // val=0 in the map hits the val > 0 FALSE branch (short-circuit); val=1 qualifies
+        assertEquals(1, s.search(new ArrayList<>(Arrays.asList(0, 0, 1))));
     }
 }

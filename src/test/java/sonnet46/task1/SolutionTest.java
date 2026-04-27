@@ -35,5 +35,7 @@ public class SolutionTest {
         assertEquals(List.of("()"), s.separateParenGroups("()"));
         // Deeply nested single group
         assertEquals(List.of("((()))"), s.separateParenGroups("((()))"));
+        // Non-paren non-space chars: hit the else-if(c==')') FALSE branch
+        assertEquals(List.of("()"), s.separateParenGroups("()abc"));
     }
 }

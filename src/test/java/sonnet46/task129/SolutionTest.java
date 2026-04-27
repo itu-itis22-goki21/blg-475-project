@@ -38,5 +38,8 @@ public class SolutionTest {
         // 1 at top-left corner (only 2 neighbors instead of 4)
         assertEquals(Arrays.asList(1, 2, 1),
                 s.minPath(Arrays.asList(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6), Arrays.asList(7, 8, 9)), 3));
+        // 1 at bottom-right corner: going down hits nr<n FALSE, going right hits nc<n FALSE
+        assertEquals(Arrays.asList(1, 2),
+                s.minPath(Arrays.asList(Arrays.asList(3, 2), Arrays.asList(4, 1)), 2));
     }
 }

@@ -43,5 +43,7 @@ public class SolutionTest {
         assertEquals("No", s.filenameCheck("a1234.txt"));
         // Empty string
         assertEquals("No", s.filenameCheck(""));
+        // null input: hits the file_name == null TRUE branch of the null || isEmpty() guard
+        assertEquals("No", s.filenameCheck(null));
     }
 }

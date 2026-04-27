@@ -46,5 +46,7 @@ public class SolutionTest {
         assertFalse(s.validDate("01-00-2020"));
         // Month 0 is invalid
         assertFalse(s.validDate("00-01-2020"));
+        // null input: hits the date == null TRUE branch of the null || isEmpty() guard
+        assertFalse(s.validDate(null));
     }
 }

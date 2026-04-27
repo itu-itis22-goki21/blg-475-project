@@ -42,5 +42,8 @@ public class SolutionTest {
         // Single exponentiation
         assertEquals(8, s.doAlgebra(new ArrayList<>(List.of("**")),
                 new ArrayList<>(Arrays.asList(2, 3))));
+        // Unknown operator passes through all loops untouched: hits else{i++} in the +/- loop
+        assertEquals(5, s.doAlgebra(new ArrayList<>(List.of("<<")),
+                new ArrayList<>(Arrays.asList(5, 3))));
     }
 }

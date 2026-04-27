@@ -33,5 +33,8 @@ public class SolutionTest {
         // Verify poly evaluation itself
         assertEquals(0.0, s.poly(Arrays.asList(0.0, 0.0), 99.0), 1e-10);
         assertEquals(7.0, s.poly(Arrays.asList(7.0), 0.0), 1e-10);
+        // Root at x=3: f(-1)<0 and f(1)<0 so product>0, forces the while-loop to expand bounds
+        double z2 = s.findZero(Arrays.asList(-3.0, 1.0));
+        assertEquals(0.0, s.poly(Arrays.asList(-3.0, 1.0), z2), 1e-4);
     }
 }
